@@ -1,0 +1,34 @@
+[
+  {
+    "date": "2026-08-15",
+    "title": "Fête votive du village",
+    "category": "Fête locale",
+    "time": "Toute la journée",
+    "place": "Place du village",
+    "desc": "Repas partagé, animations et bal en plein air pour petits et grands."
+  },
+  {
+    "date": "2026-09-06",
+    "title": "Randonnée commentée de la vallée de l'Ayguette",
+    "category": "Nature",
+    "time": "9h00",
+    "place": "Départ devant l'église",
+    "desc": "Balade familiale à la découverte des sentiers et du patrimoine autour du village."
+  },
+  {
+    "date": "2026-10-01",
+    "title": "Conseil municipal",
+    "category": "Vie municipale",
+    "time": "18h30",
+    "place": "Mairie",
+    "desc": "Séance publique du conseil municipal, ordre du jour affiché en mairie."
+  },
+  {
+    "date": "2026-12-13",
+    "title": "Marché de Noël du village",
+    "category": "Fête locale",
+    "time": "14h00 – 19h00",
+    "place": "Salle des fêtes",
+    "desc": "Artisanat local, vin chaud et animations pour préparer les fêtes de fin d'année."
+  }
+]

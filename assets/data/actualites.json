@@ -1,0 +1,23 @@
+[
+  {
+    "date": "2026-06-02",
+    "icon": "📣",
+    "title": "Bienvenue sur le nouveau site du village",
+    "excerpt": "Le Bousquet se dote d'un site dynamique pour partager son patrimoine, ses paysages et la vie locale avec ses habitants, ses amoureux et ses visiteurs.",
+    "tag": "Vie du site"
+  },
+  {
+    "date": "2026-05-18",
+    "icon": "⛰️",
+    "title": "Les sentiers autour du village se refont une beauté",
+    "excerpt": "Entretien des chemins de randonnée de la vallée de l'Ayguette avant la saison estivale : balisage et débroussaillage en cours.",
+    "tag": "Nature"
+  },
+  {
+    "date": "2026-04-30",
+    "icon": "🏛️",
+    "title": "Point sur les travaux de rénovation du patrimoine",
+    "excerpt": "Suivi des actions engagées pour la préservation du clocher et des bâtiments anciens du village.",
+    "tag": "Patrimoine"
+  }
+]
