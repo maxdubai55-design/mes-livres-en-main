@@ -11,27 +11,6 @@
     img.addEventListener('error', () => img.classList.add('img-error'), { once: true });
   });
 
-  /* ---------- Header scroll state + progress bar ---------- */
-  const header = document.getElementById('siteHeader');
-  const progressBar = document.getElementById('progressBar');
-  let ticking = false;
-
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      header.classList.toggle('scrolled', window.scrollY > 40);
-      const doc = document.documentElement;
-      const scrollable = doc.scrollHeight - doc.clientHeight;
-      const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
-      progressBar.style.width = pct + '%';
-      updatePanorama();
-      ticking = false;
-    });
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
   /* ---------- Mobile nav ---------- */
   const navToggle = document.getElementById('navToggle');
   const siteNav = document.getElementById('siteNav');
@@ -44,7 +23,54 @@
     navToggle.setAttribute('aria-expanded', 'false');
   }));
 
+  /* ---------- Header scroll state + progress bar + hide-on-scroll ---------- */
+  const header = document.getElementById('siteHeader');
+  const progressBar = document.getElementById('progressBar');
+  const timelineEl = document.querySelector('.timeline');
+  let ticking = false;
+  let lastScrollY = window.scrollY;
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      header.classList.toggle('scrolled', y > 40);
+
+      if (!siteNav.classList.contains('open')) {
+        const delta = y - lastScrollY;
+        if (y > 160 && delta > 4) header.classList.add('header-hidden');
+        else if (delta < -4 || y < 160) header.classList.remove('header-hidden');
+      }
+      lastScrollY = y;
+
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - doc.clientHeight;
+      const pct = scrollable > 0 ? (y / scrollable) * 100 : 0;
+      progressBar.style.width = pct + '%';
+
+      if (timelineEl) {
+        const rect = timelineEl.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const progress = Math.min(Math.max((vh * 0.75 - rect.top) / rect.height, 0), 1);
+        timelineEl.style.setProperty('--tl-progress', progress.toFixed(3));
+      }
+
+      updatePanorama();
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
   /* ---------- Reveal on scroll ---------- */
+  document.querySelectorAll('.timeline-item').forEach((el, i) => {
+    el.classList.add(i % 2 === 0 ? 'reveal-left' : 'reveal-right');
+  });
+  document.querySelectorAll('.arch-card').forEach((el, i) => {
+    el.classList.add(i % 2 === 0 ? 'reveal-left' : 'reveal-right');
+  });
+
   const revealItems = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !prefersReducedMotion) {
     const io = new IntersectionObserver((entries) => {
@@ -63,15 +89,18 @@
   /* ---------- Hero parallax (mouse + scroll) ---------- */
   const heroStage = document.getElementById('heroStage');
   const hero = document.getElementById('hero');
+  const heroContent = document.querySelector('.hero-content');
   if (!prefersReducedMotion && !isCoarsePointer) {
     hero.addEventListener('mousemove', (e) => {
       const rect = hero.getBoundingClientRect();
       const mx = (e.clientX - rect.left) / rect.width - 0.5;
       const my = (e.clientY - rect.top) / rect.height - 0.5;
-      heroStage.style.transform = `rotateY(${mx * 6}deg) rotateX(${-my * 6}deg) scale(1.03)`;
+      heroStage.style.transform = `rotateY(${mx * 10}deg) rotateX(${-my * 10}deg) scale(1.05)`;
+      heroContent.style.transform = `translate3d(${-mx * 18}px, ${-my * 12}px, 0)`;
     });
     hero.addEventListener('mouseleave', () => {
       heroStage.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+      heroContent.style.transform = 'translate3d(0,0,0)';
     });
   }
   if (!prefersReducedMotion) {
@@ -235,4 +264,91 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
   });
+
+  /* ---------- Cursor halo (ambient light following the pointer) ---------- */
+  const cursorHalo = document.getElementById('cursorHalo');
+  if (!prefersReducedMotion && !isCoarsePointer && cursorHalo) {
+    let haloX = 0, haloY = 0, haloTX = 0, haloTY = 0, haloTicking = false;
+    document.addEventListener('mousemove', (e) => {
+      haloX = e.clientX; haloY = e.clientY;
+      cursorHalo.classList.add('active');
+      if (!haloTicking) {
+        haloTicking = true;
+        requestAnimationFrame(function tick() {
+          haloTX += (haloX - haloTX) * 0.16;
+          haloTY += (haloY - haloTY) * 0.16;
+          cursorHalo.style.transform = `translate(${haloTX}px, ${haloTY}px)`;
+          if (Math.abs(haloX - haloTX) > 0.5 || Math.abs(haloY - haloTY) > 0.5) {
+            requestAnimationFrame(tick);
+          } else {
+            haloTicking = false;
+          }
+        });
+      }
+    });
+    document.addEventListener('mouseleave', () => cursorHalo.classList.remove('active'));
+  }
+
+  /* ---------- Hero light particles ---------- */
+  const heroParticles = document.getElementById('heroParticles');
+  if (!prefersReducedMotion && heroParticles) {
+    const count = window.innerWidth < 700 ? 8 : 16;
+    for (let i = 0; i < count; i++) {
+      const mote = document.createElement('span');
+      mote.className = 'mote';
+      const size = 2 + Math.random() * 3;
+      mote.style.left = Math.random() * 100 + '%';
+      mote.style.width = size + 'px';
+      mote.style.height = size + 'px';
+      mote.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+      mote.style.animationDuration = (10 + Math.random() * 10) + 's';
+      mote.style.animationDelay = (Math.random() * 14) + 's';
+      heroParticles.appendChild(mote);
+    }
+  }
+
+  /* ---------- Kinetic nav: active section + magnetic glow ---------- */
+  const navLinks = Array.from(siteNav.querySelectorAll('a[href^="#"]'));
+  const navSections = navLinks
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+
+  if ('IntersectionObserver' in window && navSections.length) {
+    const navIo = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const link = navLinks.find(a => a.getAttribute('href') === '#' + entry.target.id);
+        if (!link) return;
+        if (entry.isIntersecting) {
+          navLinks.forEach(a => a.classList.remove('active'));
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    navSections.forEach(sec => navIo.observe(sec));
+  }
+
+  if (!isCoarsePointer) {
+    navLinks.forEach(a => {
+      a.addEventListener('mousemove', (e) => {
+        const r = a.getBoundingClientRect();
+        a.style.setProperty('--mx', ((e.clientX - r.left) / r.width) * 100 + '%');
+        a.style.setProperty('--my', ((e.clientY - r.top) / r.height) * 100 + '%');
+      });
+    });
+  }
+
+  /* ---------- Holographic tilt-on-hover cards ---------- */
+  if (!prefersReducedMotion && !isCoarsePointer) {
+    const tiltEls = document.querySelectorAll('.gallery-item, .arch-card, .timeline-card');
+    tiltEls.forEach(el => {
+      const max = el.classList.contains('gallery-item') ? 9 : 6;
+      el.addEventListener('mousemove', (e) => {
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        el.style.transform = `perspective(800px) rotateX(${-py * max}deg) rotateY(${px * max}deg) translateY(-2px)`;
+      });
+      el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+    });
+  }
 })();

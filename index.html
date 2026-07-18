@@ -15,6 +15,7 @@
 
 <a class="skip-link" href="#main">Aller au contenu</a>
 <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+<div class="cursor-halo" id="cursorHalo" aria-hidden="true"></div>
 
 <header class="site-header" id="siteHeader">
   <a href="#hero" class="brand">
@@ -48,11 +49,12 @@
     <div class="glow-window gw3"></div>
     <div class="glow-window gw4"></div>
     <div class="glow-window gw5"></div>
+    <div class="hero-particles" id="heroParticles" aria-hidden="true"></div>
   </div>
 
   <div class="hero-content">
     <p class="hero-kicker reveal">Val de Loire · Renaissance française · 1519</p>
-    <h1 class="hero-title reveal">Château de <span>Chambord</span></h1>
+    <h1 class="hero-title reveal" id="heroTitle">Château de <span>Chambord</span></h1>
     <p class="hero-sub reveal">Un rêve de pierre né de François I<sup>er</sup>, un escalier magique attribué à Léonard de Vinci, 426 pièces à explorer. Entrez, et déployez le château sous toutes ses coupes.</p>
     <div class="hero-actions reveal">
       <a href="#architecture" class="btn btn-primary">Explorer l'architecture</a>
@@ -69,6 +71,8 @@
 
 <!-- ===================== CHIFFRES CLÉS ===================== -->
 <section class="stats" aria-label="Chambord en chiffres">
+  <div class="aurora aurora-gold" aria-hidden="true"></div>
+  <div class="aurora aurora-blue" aria-hidden="true"></div>
   <div class="stat reveal">
     <span class="stat-num" data-count="426">0</span>
     <span class="stat-label">pièces</span>
@@ -147,12 +151,13 @@
   </div>
 
   <div class="compare reveal" id="compareArch">
-    <div class="compare-frame">
+    <div class="compare-frame float">
       <img class="compare-base" src="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord%2C_fa%C3%A7ade_nord.jpg?width=1600" alt="Façade nord actuelle du château de Chambord">
       <div class="compare-overlay-wrap" id="compareOverlayWrap">
         <img class="compare-overlay" src="https://commons.wikimedia.org/wiki/Special:FilePath/Plan.chateau.Chambord.png?width=1400" alt="Plan historique du château de Chambord, gravure de Jacques Androuet du Cerceau, 1576, montrant la répartition des pièces">
       </div>
       <div class="compare-handle" id="compareHandle" aria-hidden="true"><span>⇔</span></div>
+      <div class="scan-line compare-scan" aria-hidden="true"></div>
     </div>
     <input type="range" min="0" max="100" value="50" class="compare-range" id="compareRange" aria-label="Glisser pour comparer la photo actuelle et le plan historique de 1576">
     <div class="compare-tags">
@@ -179,6 +184,8 @@
 
 <!-- ===================== GRAND ESCALIER ===================== -->
 <section class="escalier" id="escalier">
+  <div class="aurora aurora-gold" aria-hidden="true"></div>
+  <div class="aurora aurora-blue" aria-hidden="true"></div>
   <div class="section-head reveal light">
     <p class="eyebrow">Chapitre III</p>
     <h2>L'escalier à double révolution</h2>
@@ -186,13 +193,14 @@
   </div>
 
   <div class="escalier-stage">
-    <div class="escalier-3d reveal" id="escalier3d">
+    <div class="escalier-3d reveal float" id="escalier3d">
       <div class="escalier-3d-inner">
         <img id="escalierMainImg" src="https://commons.wikimedia.org/wiki/Special:FilePath/Grand_escalier_%C3%A0_double_h%C3%A9lice_du_ch%C3%A2teau_de_Chambord.JPG?width=1600" alt="Vue plongeante sur l'escalier à double révolution du château de Chambord">
         <div class="blueprint-grid" aria-hidden="true"></div>
+        <div class="scan-line escalier-scan" aria-hidden="true"></div>
       </div>
       <button class="btn btn-outline xray-btn" id="xrayToggle" aria-pressed="false">
-        <span aria-hidden="true">◈</span> Mode plan / scan (effet stylisé)
+        <span aria-hidden="true">◈</span> Scan architectural (rayons-X)
       </button>
     </div>
 
@@ -227,7 +235,7 @@
   </div>
 
   <div class="plan-wrap reveal">
-    <div class="plan-map" id="planMap">
+    <div class="plan-map float" id="planMap">
       <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Plan.chateau.Chambord.png?width=1400" alt="Plan historique du château de Chambord">
       <button class="plan-pin" style="left:50%; top:47%;" data-title="Donjon central" data-desc="Cœur du château : quatre salles en croix superposées sur trois niveaux, organisées autour du grand escalier à double révolution.">1</button>
       <button class="plan-pin" style="left:31%; top:27%;" data-title="Tour d'angle Nord-Ouest" data-desc="L'une des quatre grosses tours rondes du donjon, abritant sur plusieurs niveaux les appartements royaux.">2</button>
@@ -300,6 +308,7 @@
 
 <!-- ===================== INFOS PRATIQUES ===================== -->
 <section class="infos" id="infos">
+  <div class="aurora aurora-gold" aria-hidden="true"></div>
   <div class="infos-grid">
     <div class="reveal">
       <p class="eyebrow">Préparer sa visite</p>
@@ -312,7 +321,7 @@
       </ul>
       <a class="btn btn-primary" href="https://www.chambord.org" target="_blank" rel="noopener noreferrer">Site officiel du domaine ↗</a>
     </div>
-    <div class="reveal infos-card">
+    <div class="reveal infos-card float">
       <h3>Le saviez-vous&nbsp;?</h3>
       <p>Chambord ne fut habité en tout et pour tout qu'environ <strong>42&nbsp;jours</strong> par François I<sup>er</sup> lui-même en plus de vingt ans de règne — un château pensé avant tout comme décor de chasses et de fêtes plutôt que comme résidence.</p>
     </div>
