@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Château de Chambord — Voyage architectural interactif</title>
+<meta name="description" content="Un voyage interactif et animé au cœur du Château de Chambord : histoire, architecture, plan, escalier à double révolution et galerie en 3D.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏰</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+<div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+<header class="site-header" id="siteHeader">
+  <a href="#hero" class="brand">
+    <span class="brand-crest" aria-hidden="true">⚜</span>
+    <span>Chambord</span>
+  </a>
+  <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Ouvrir le menu">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="site-nav" id="siteNav">
+    <a href="#histoire">Histoire</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#escalier">Grand escalier</a>
+    <a href="#plan">Plan interactif</a>
+    <a href="#panorama">Panorama</a>
+    <a href="#galerie">Galerie</a>
+    <a href="#infos">Visiter</a>
+  </nav>
+</header>
+
+<main id="main">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="hero">
+  <div class="hero-stage" id="heroStage">
+    <img class="hero-img hero-img--day" src="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord..JPG?width=1920" alt="Façade du château de Chambord depuis les jardins" loading="eager">
+    <div class="hero-vignette"></div>
+    <div class="hero-stars" aria-hidden="true"></div>
+    <div class="glow-window gw1"></div>
+    <div class="glow-window gw2"></div>
+    <div class="glow-window gw3"></div>
+    <div class="glow-window gw4"></div>
+    <div class="glow-window gw5"></div>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-kicker reveal">Val de Loire · Renaissance française · 1519</p>
+    <h1 class="hero-title reveal">Château de <span>Chambord</span></h1>
+    <p class="hero-sub reveal">Un rêve de pierre né de François I<sup>er</sup>, un escalier magique attribué à Léonard de Vinci, 426 pièces à explorer. Entrez, et déployez le château sous toutes ses coupes.</p>
+    <div class="hero-actions reveal">
+      <a href="#architecture" class="btn btn-primary">Explorer l'architecture</a>
+      <button class="btn btn-ghost" id="dayNightToggle" aria-pressed="false">
+        <span class="dn-icon" aria-hidden="true">☾</span> Vue de nuit
+      </button>
+    </div>
+  </div>
+
+  <a href="#histoire" class="scroll-cue" aria-label="Défiler vers le bas">
+    <span class="scroll-cue-mouse"><span></span></span>
+  </a>
+</section>
+
+<!-- ===================== CHIFFRES CLÉS ===================== -->
+<section class="stats" aria-label="Chambord en chiffres">
+  <div class="stat reveal">
+    <span class="stat-num" data-count="426">0</span>
+    <span class="stat-label">pièces</span>
+  </div>
+  <div class="stat reveal">
+    <span class="stat-num" data-count="282">0</span>
+    <span class="stat-label">cheminées</span>
+  </div>
+  <div class="stat reveal">
+    <span class="stat-num" data-count="800">0</span>
+    <span class="stat-label">chapiteaux sculptés</span>
+  </div>
+  <div class="stat reveal">
+    <span class="stat-num" data-count="1519">0</span>
+    <span class="stat-label">année de fondation</span>
+  </div>
+  <div class="stat reveal">
+    <span class="stat-num" data-count="5440">0</span>
+    <span class="stat-label">hectares de domaine clos</span>
+  </div>
+</section>
+
+<!-- ===================== HISTOIRE ===================== -->
+<section class="histoire" id="histoire">
+  <div class="section-head reveal">
+    <p class="eyebrow">Chapitre I</p>
+    <h2>Une utopie de la Renaissance</h2>
+    <p class="lead">De la volonté d'un roi de vingt-cinq ans à la plus audacieuse silhouette du Val de Loire.</p>
+  </div>
+
+  <ol class="timeline">
+    <li class="timeline-item reveal">
+      <span class="timeline-year">1519</span>
+      <div class="timeline-card">
+        <h3>La première pierre</h3>
+        <p>François I<sup>er</sup>, tout juste revenu de Marignan, lance le chantier d'un château de chasse démesuré en lisière de la forêt de Boulogne. L'ambition dépasse d'emblée le simple pavillon de chasse : c'est un manifeste de la Renaissance française.</p>
+      </div>
+    </li>
+    <li class="timeline-item reveal">
+      <span class="timeline-year">1519–1547</span>
+      <div class="timeline-card">
+        <h3>L'ombre de Léonard de Vinci</h3>
+        <p>Installé à Amboise jusqu'à sa mort en 1519, Léonard aurait influencé le plan en croix du donjon et l'idée du célèbre escalier à double révolution. Aucun plan signé ne le prouve formellement, mais l'esprit de ses carnets plane sur chaque travée.</p>
+      </div>
+    </li>
+    <li class="timeline-item reveal">
+      <span class="timeline-year">1547–1685</span>
+      <div class="timeline-card">
+        <h3>Les ajouts royaux</h3>
+        <p>Henri II poursuit l'aile de la chapelle, puis Louis XIV, conseillé par Mansart, fait aménager les terrasses et les appartements royaux. Molière y crée <em>Le Bourgeois gentilhomme</em> en 1670, sous les lambris du château.</p>
+      </div>
+    </li>
+    <li class="timeline-item reveal">
+      <span class="timeline-year">1789–1932</span>
+      <div class="timeline-card">
+        <h3>Abandon, restauration, sauvetage</h3>
+        <p>Vidé à la Révolution, cédé au maréchal de Saxe puis aux Bourbon-Parme, le château manque plusieurs fois la ruine avant que l'État ne l'achète en 1930, ouvrant l'ère des grandes restaurations.</p>
+      </div>
+    </li>
+    <li class="timeline-item reveal">
+      <span class="timeline-year">Aujourd'hui</span>
+      <div class="timeline-card">
+        <h3>Un monument vivant</h3>
+        <p>Classé au patrimoine mondial de l'UNESCO avec le Val de Loire, Chambord accueille plus d'un million de visiteurs par an et poursuit ses chantiers de restauration, dont celui des lanternons, achevé récemment.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- ===================== ARCHITECTURE / COUPE TRANSLUCIDE ===================== -->
+<section class="architecture" id="architecture">
+  <div class="section-head reveal">
+    <p class="eyebrow">Chapitre II</p>
+    <h2>Sous la pierre : la distribution des pièces</h2>
+    <p class="lead">Faites glisser le curseur pour superposer à la façade actuelle le plan historique gravé par Jacques Androuet du Cerceau (1576), qui révèle l'organisation en croix du donjon autour de l'escalier central.</p>
+  </div>
+
+  <div class="compare reveal" id="compareArch">
+    <div class="compare-frame">
+      <img class="compare-base" src="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord%2C_fa%C3%A7ade_nord.jpg?width=1600" alt="Façade nord actuelle du château de Chambord">
+      <div class="compare-overlay-wrap" id="compareOverlayWrap">
+        <img class="compare-overlay" src="https://commons.wikimedia.org/wiki/Special:FilePath/Plan.chateau.Chambord.png?width=1400" alt="Plan historique du château de Chambord, gravure de Jacques Androuet du Cerceau, 1576, montrant la répartition des pièces">
+      </div>
+      <div class="compare-handle" id="compareHandle" aria-hidden="true"><span>⇔</span></div>
+    </div>
+    <input type="range" min="0" max="100" value="50" class="compare-range" id="compareRange" aria-label="Glisser pour comparer la photo actuelle et le plan historique de 1576">
+    <div class="compare-tags">
+      <span class="tag tag-left">Façade actuelle</span>
+      <span class="tag tag-right">Plan des pièces · 1576</span>
+    </div>
+  </div>
+
+  <div class="arch-grid">
+    <div class="arch-card reveal">
+      <h3>Un plan en croix grecque</h3>
+      <p>Le donjon central s'organise autour de quatre salles en croix, superposées sur trois niveaux, distribuant les logis des quatre grandes tours d'angle — un plan d'une régularité presque mathématique, rare pour l'époque.</p>
+    </div>
+    <div class="arch-card reveal">
+      <h3>Une terrasse habitée</h3>
+      <p>Les toits, hérissés de 11 tours et 3 sortes de cheminées différentes, forment un véritable village vertical où la cour venait déambuler et observer les chasses et les fêtes dans le parc.</p>
+    </div>
+    <div class="arch-card reveal">
+      <h3>Une géométrie voulue</h3>
+      <p>Chaque façade, chaque lucarne, chaque chapiteau répond à une trame symétrique héritée des traités d'architecture italiens, traduite ici dans le vocabulaire décoratif du gothique flamboyant finissant.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GRAND ESCALIER ===================== -->
+<section class="escalier" id="escalier">
+  <div class="section-head reveal light">
+    <p class="eyebrow">Chapitre III</p>
+    <h2>L'escalier à double révolution</h2>
+    <p class="lead">Deux vis entrelacées permettent à deux personnes de monter et descendre simultanément sans jamais se croiser — un tour de force technique que la tradition attribue à l'esprit de Léonard de Vinci.</p>
+  </div>
+
+  <div class="escalier-stage">
+    <div class="escalier-3d reveal" id="escalier3d">
+      <div class="escalier-3d-inner">
+        <img id="escalierMainImg" src="https://commons.wikimedia.org/wiki/Special:FilePath/Grand_escalier_%C3%A0_double_h%C3%A9lice_du_ch%C3%A2teau_de_Chambord.JPG?width=1600" alt="Vue plongeante sur l'escalier à double révolution du château de Chambord">
+        <div class="blueprint-grid" aria-hidden="true"></div>
+      </div>
+      <button class="btn btn-outline xray-btn" id="xrayToggle" aria-pressed="false">
+        <span aria-hidden="true">◈</span> Mode plan / scan (effet stylisé)
+      </button>
+    </div>
+
+    <div class="escalier-facts reveal">
+      <ul>
+        <li><strong>Double hélice&nbsp;:</strong> deux escaliers en vis, imbriqués autour d'un noyau central ajouré, du sol aux terrasses.</li>
+        <li><strong>77&nbsp;mètres</strong> de dénivelé cumulé jusqu'à la lanterne qui couronne le donjon.</li>
+        <li><strong>Un jeu visuel&nbsp;:</strong> par les jours du noyau central, on aperçoit la silhouette de qui monte ou descend sans jamais se rencontrer.</li>
+        <li><strong>Une signature Renaissance&nbsp;:</strong> aucun croquis autographe de Léonard de Vinci ne la mentionne, mais le principe apparaît dans ses carnets milanais.</li>
+      </ul>
+      <div class="escalier-thumbs">
+        <button class="escalier-thumb active" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Grand_escalier_%C3%A0_double_h%C3%A9lice_du_ch%C3%A2teau_de_Chambord.JPG?width=1600" aria-label="Vue 1 de l'escalier">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Grand_escalier_%C3%A0_double_h%C3%A9lice_du_ch%C3%A2teau_de_Chambord.JPG?width=300" alt="" loading="lazy">
+        </button>
+        <button class="escalier-thumb" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Escalier_double_helice_Chambord.jpg?width=1600" aria-label="Vue 2 de l'escalier">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Escalier_double_helice_Chambord.jpg?width=300" alt="" loading="lazy">
+        </button>
+        <button class="escalier-thumb" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord_-_l%27escalier_%C3%A0_double_r%C3%A9volution_-_008.jpg?width=1600" aria-label="Vue 3 de l'escalier">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord_-_l%27escalier_%C3%A0_double_r%C3%A9volution_-_008.jpg?width=300" alt="" loading="lazy">
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PLAN INTERACTIF ===================== -->
+<section class="plan" id="plan">
+  <div class="section-head reveal">
+    <p class="eyebrow">Chapitre IV</p>
+    <h2>Plan interactif du domaine</h2>
+    <p class="lead">Survolez ou touchez les repères pour découvrir les grands espaces du château, du donjon central aux ailes royales.</p>
+  </div>
+
+  <div class="plan-wrap reveal">
+    <div class="plan-map" id="planMap">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Plan.chateau.Chambord.png?width=1400" alt="Plan historique du château de Chambord">
+      <button class="plan-pin" style="left:50%; top:47%;" data-title="Donjon central" data-desc="Cœur du château : quatre salles en croix superposées sur trois niveaux, organisées autour du grand escalier à double révolution.">1</button>
+      <button class="plan-pin" style="left:31%; top:27%;" data-title="Tour d'angle Nord-Ouest" data-desc="L'une des quatre grosses tours rondes du donjon, abritant sur plusieurs niveaux les appartements royaux.">2</button>
+      <button class="plan-pin" style="left:69%; top:27%;" data-title="Tour d'angle Nord-Est" data-desc="Tour d'angle reliée par les salles en croix, avec vue sur les jardins à la française et le canal.">3</button>
+      <button class="plan-pin" style="left:31%; top:70%;" data-title="Aile de la chapelle" data-desc="Commencée sous Henri II et achevée au XVIIe siècle sous la direction de Mansart, cette aile abrite la chapelle Saint-Louis.">4</button>
+      <button class="plan-pin" style="left:69%; top:70%;" data-title="Aile royale" data-desc="Aile aménagée pour les séjours de Louis XIV, avec les grands appartements donnant sur la cour et le parc.">5</button>
+      <button class="plan-pin" style="left:50%; top:14%;" data-title="Terrasses et lanterne" data-desc="Le sommet du donjon : un belvédère sculpté de tourelles, cheminées et lucarnes, coiffé par la lanterne culminant à 32 mètres.">6</button>
+    </div>
+    <div class="plan-detail" id="planDetail">
+      <p class="plan-detail-hint">Sélectionnez un repère sur le plan pour afficher sa description ici.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PANORAMA SCROLL ===================== -->
+<section class="panorama-outer" id="panorama">
+  <div class="panorama-sticky">
+    <div class="panorama-stage">
+      <img class="panorama-layer" data-i="0" src="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord%2C_noir_et_blanc.JPG?width=1920" alt="Silhouette générale du château de Chambord">
+      <img class="panorama-layer" data-i="1" src="https://commons.wikimedia.org/wiki/Special:FilePath/D%C3%A9tail_superstructures_du_ch%C3%A2teau_de_Chambord.JPG?width=1920" alt="Détail des cheminées, lucarnes et tourelles sur les toits-terrasses">
+      <img class="panorama-layer" data-i="2" src="https://commons.wikimedia.org/wiki/Special:FilePath/Grand_escalier_%C3%A0_double_h%C3%A9lice_du_ch%C3%A2teau_de_Chambord.JPG?width=1920" alt="Cœur du donjon et escalier à double révolution">
+      <img class="panorama-layer" data-i="3" src="https://commons.wikimedia.org/wiki/Special:FilePath/Aerial_image_of_Ch%C3%A2teau_de_Chambord_(view_from_the_southeast).jpg?width=1920" alt="Vue aérienne du château de Chambord et de son plan en croix">
+      <div class="panorama-gradient"></div>
+
+      <div class="panorama-caption">
+        <p class="panorama-eyebrow">Coupe <span id="panoIndex">01</span> / 04</p>
+        <h3 id="panoTitle">La silhouette depuis les jardins</h3>
+        <p id="panoText">Un socle massif, des toits ciselés : la découverte du château commence toujours par cette ligne d'horizon inimitable.</p>
+      </div>
+
+      <div class="panorama-dots" id="panoDots">
+        <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GALERIE ===================== -->
+<section class="galerie" id="galerie">
+  <div class="section-head reveal">
+    <p class="eyebrow">Chapitre V</p>
+    <h2>Galerie</h2>
+    <p class="lead">Un mur d'images pour flâner à travers les façades, les toits et les reflets du château.</p>
+  </div>
+
+  <div class="gallery-grid reveal">
+    <button class="gallery-item span-2" data-full="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord..JPG?width=1920" data-caption="Façade principale depuis les jardins à la française.">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord..JPG?width=900" alt="Façade principale du château de Chambord" loading="lazy">
+    </button>
+    <button class="gallery-item" data-full="https://commons.wikimedia.org/wiki/Special:FilePath/Vue_g%C3%A9n%C3%A9ral_du_Ch%C3%A2teau_de_Chambord_et_reflet_sur_le_canal..JPG?width=1600" data-caption="Reflet du château sur le canal qui borde le domaine.">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Vue_g%C3%A9n%C3%A9ral_du_Ch%C3%A2teau_de_Chambord_et_reflet_sur_le_canal..JPG?width=700" alt="Reflet du château de Chambord sur le canal" loading="lazy">
+    </button>
+    <button class="gallery-item" data-full="https://commons.wikimedia.org/wiki/Special:FilePath/Les_chemin%C3%A9es_du_ch%C3%A2teau_de_Chambord_(1).jpg?width=1600" data-caption="La forêt de cheminées sculptées qui couronne les toits.">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Les_chemin%C3%A9es_du_ch%C3%A2teau_de_Chambord_(1).jpg?width=700" alt="Cheminées sculptées du château de Chambord" loading="lazy">
+    </button>
+    <button class="gallery-item" data-full="https://commons.wikimedia.org/wiki/Special:FilePath/D%C3%A9tail_superstructures_du_ch%C3%A2teau_de_Chambord.JPG?width=1600" data-caption="Détail des superstructures : lucarnes, tourelles et lanternons.">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/D%C3%A9tail_superstructures_du_ch%C3%A2teau_de_Chambord.JPG?width=700" alt="Détail des superstructures du château de Chambord" loading="lazy">
+    </button>
+    <button class="gallery-item span-2" data-full="https://commons.wikimedia.org/wiki/Special:FilePath/Aerial_image_of_Ch%C3%A2teau_de_Chambord_(view_from_the_southeast).jpg?width=1920" data-caption="Vue aérienne depuis le sud-est : le plan en croix du donjon apparaît dans son ensemble.">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Aerial_image_of_Ch%C3%A2teau_de_Chambord_(view_from_the_southeast).jpg?width=900" alt="Vue aérienne du château de Chambord" loading="lazy">
+    </button>
+    <button class="gallery-item" data-full="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord%2C_fa%C3%A7ade_nord.jpg?width=1600" data-caption="La façade nord, la plus photographiée du domaine.">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord%2C_fa%C3%A7ade_nord.jpg?width=700" alt="Façade nord du château de Chambord" loading="lazy">
+    </button>
+    <button class="gallery-item" data-full="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord%2C_noir_et_blanc.JPG?width=1600" data-caption="Le château en noir et blanc, silhouette intemporelle.">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ch%C3%A2teau_de_Chambord%2C_noir_et_blanc.JPG?width=700" alt="Château de Chambord en noir et blanc" loading="lazy">
+    </button>
+  </div>
+</section>
+
+<!-- ===================== INFOS PRATIQUES ===================== -->
+<section class="infos" id="infos">
+  <div class="infos-grid">
+    <div class="reveal">
+      <p class="eyebrow">Préparer sa visite</p>
+      <h2>Informations pratiques</h2>
+      <ul class="infos-list">
+        <li><strong>Adresse&nbsp;:</strong> Château de Chambord, 41250 Chambord, France</li>
+        <li><strong>Ouverture&nbsp;:</strong> toute l'année, horaires variables selon saison</li>
+        <li><strong>Accès&nbsp;:</strong> à environ 15&nbsp;km de Blois, en plein cœur du Val de Loire</li>
+        <li><strong>Domaine&nbsp;:</strong> 5&nbsp;440 hectares clos par 32&nbsp;km de mur — le plus grand parc forestier clos d'Europe</li>
+      </ul>
+      <a class="btn btn-primary" href="https://www.chambord.org" target="_blank" rel="noopener noreferrer">Site officiel du domaine ↗</a>
+    </div>
+    <div class="reveal infos-card">
+      <h3>Le saviez-vous&nbsp;?</h3>
+      <p>Chambord ne fut habité en tout et pour tout qu'environ <strong>42&nbsp;jours</strong> par François I<sup>er</sup> lui-même en plus de vingt ans de règne — un château pensé avant tout comme décor de chasses et de fêtes plutôt que comme résidence.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image agrandie" hidden>
+  <button class="lightbox-close" id="lightboxClose" aria-label="Fermer">✕</button>
+  <img id="lightboxImg" src="" alt="">
+  <p id="lightboxCaption"></p>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="brand footer-brand">
+      <span class="brand-crest" aria-hidden="true">⚜</span>
+      <span>Chambord</span>
+    </div>
+    <p>Site indépendant, réalisé à des fins de découverte et de démonstration interactive. Non affilié au Domaine national de Chambord.</p>
+  </div>
+  <div class="footer-credits">
+    <h4>Crédits photographiques — Wikimedia Commons</h4>
+    <p>Images réutilisées sous licence libre (Creative Commons / domaine public). Cliquez pour consulter la page de chaque fichier, son auteur et sa licence exacte.</p>
+    <ul>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Chambord..JPG" target="_blank" rel="noopener noreferrer">Façade principale</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Vue_g%C3%A9n%C3%A9ral_du_Ch%C3%A2teau_de_Chambord_et_reflet_sur_le_canal..JPG" target="_blank" rel="noopener noreferrer">Reflet sur le canal</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:D%C3%A9tail_superstructures_du_ch%C3%A2teau_de_Chambord.JPG" target="_blank" rel="noopener noreferrer">Superstructures des toits</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Chambord,_noir_et_blanc.JPG" target="_blank" rel="noopener noreferrer">Vue noir et blanc</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Chambord,_fa%C3%A7ade_nord.jpg" target="_blank" rel="noopener noreferrer">Façade nord</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Aerial_image_of_Ch%C3%A2teau_de_Chambord_(view_from_the_southeast).jpg" target="_blank" rel="noopener noreferrer">Vue aérienne</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Plan.chateau.Chambord.png" target="_blank" rel="noopener noreferrer">Plan historique (1576, domaine public)</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Les_chemin%C3%A9es_du_ch%C3%A2teau_de_Chambord_(1).jpg" target="_blank" rel="noopener noreferrer">Cheminées</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Grand_escalier_%C3%A0_double_h%C3%A9lice_du_ch%C3%A2teau_de_Chambord.JPG" target="_blank" rel="noopener noreferrer">Grand escalier — vue 1</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Escalier_double_helice_Chambord.jpg" target="_blank" rel="noopener noreferrer">Grand escalier — vue 2</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Chambord_-_l%27escalier_%C3%A0_double_r%C3%A9volution_-_008.jpg" target="_blank" rel="noopener noreferrer">Grand escalier — vue 3</a></li>
+    </ul>
+  </div>
+  <p class="footer-bottom">© <span id="year"></span> — Site créé pour un usage éducatif et démonstratif.</p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
