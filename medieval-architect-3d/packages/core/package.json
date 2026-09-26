@@ -1,0 +1,25 @@
+{
+  "name": "@ma3d/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Modèle de données central de MEDIEVAL ARCHITECT 3D : schémas, validation, règles pures.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./src/*": "./src/*"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

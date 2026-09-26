@@ -1,0 +1,22 @@
+{
+  "name": "@ma3d/geometry",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Générateurs paramétriques et adaptateur de noyau géométrique (manifold-3d).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ma3d/core": "0.1.0",
+    "manifold-3d": "^3.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "fast-check": "^4.10.2",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

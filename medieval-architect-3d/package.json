@@ -1,0 +1,20 @@
+{
+  "name": "medieval-architect-3d",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @ma3d/studio",
+    "build": "npm run build -w @ma3d/studio",
+    "preview": "npm run preview -w @ma3d/studio",
+    "test": "npm test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "e2e": "npm run e2e -w @ma3d/studio"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

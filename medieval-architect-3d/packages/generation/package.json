@@ -1,0 +1,22 @@
+{
+  "name": "@ma3d/generation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Génération contrainte : phrase → BuildingSpecification → modules placés et raccordés.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ma3d/core": "0.1.0"
+  },
+  "devDependencies": {
+    "@ma3d/geometry": "0.1.0",
+    "@types/node": "^22.0.0",
+    "fast-check": "^4.10.2",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

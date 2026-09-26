@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "prompt": "Crée une cathédrale gothique du XIIIe siècle d'environ 90 m de longueur, nef à trois vaisseaux, transept, chœur à déambulatoire, cinq chapelles rayonnantes, deux tours de façade et arcs-boutants.",
+  "building": {
+    "type": "cathedral",
+    "date": { "from": 1201, "to": 1300 },
+    "style": "gothic.classic",
+    "function": "cathédrale épiscopale"
+  },
+  "overall": { "length": 90000 },
+  "modules": [
+    { "ref": "nave#1", "type": "church.nave", "params": { "aisles": 1, "bays": 7 } },
+    { "ref": "transept#1", "type": "church.transept", "placement": { "zone": "axis", "relativeTo": "nave#1" } },
+    { "ref": "choir#1", "type": "church.choir.ambulatory", "placement": { "zone": "apse" } },
+    { "ref": "chapel.radiating#1", "type": "church.chapel.radiating", "count": 5, "placement": { "zone": "apse", "relativeTo": "choir#1" } },
+    { "ref": "tower.facade#1", "type": "church.tower.facade", "count": 2, "placement": { "zone": "facade" } },
+    { "ref": "flying#1", "type": "church.buttress.flying", "role": "nave_buttressing", "placement": { "relativeTo": "nave#1" } }
+  ],
+  "relations": [
+    { "kind": "connects", "from": "nave#1", "to": "transept#1" },
+    { "kind": "connects", "from": "transept#1", "to": "choir#1" },
+    { "kind": "buttresses", "from": "flying#1", "to": "nave#1" }
+  ],
+  "constraints": [
+    { "domain": "structure", "strength": "strict", "statement": "Chaque voûte haute de la nef doit être contrebutée." }
+  ],
+  "generation": { "mode": "historically_constrained", "variants": 3 },
+  "assumptions": [
+    "« Nef à trois vaisseaux » = vaisseau central + un bas-côté de chaque côté.",
+    "Région non précisée : contrôle régional désactivé tant que l'utilisateur ne l'a pas choisie.",
+    "Voûtes quadripartites par défaut (gothique classique)."
+  ]
+}

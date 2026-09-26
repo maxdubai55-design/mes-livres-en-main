@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "prompt": "Construis une forteresse royale française du XIIIe siècle sur un éperon rocheux de 120 × 60 m, avec quatre tours rondes, un donjon, une double enceinte, une porte fortifiée et un logis.",
+  "building": {
+    "type": "fortress",
+    "date": { "from": 1201, "to": 1300 },
+    "region": "fr.ile-de-france",
+    "style": "fortification",
+    "function": "forteresse royale"
+  },
+  "overall": { "length": 120000, "width": 60000 },
+  "terrain": { "kind": "spur", "support": "rock", "footprint": { "length": 120000, "width": 60000 } },
+  "levels": [
+    { "name": "Cour", "elevation": 0 },
+    { "name": "Chemin de ronde", "elevation": 9000 }
+  ],
+  "modules": [
+    { "ref": "enceinte.outer#1", "type": "castle.wall.curtain", "role": "outer_enceinte", "placement": { "zone": "perimeter" }, "params": { "height": 8000 } },
+    { "ref": "enceinte.inner#1", "type": "castle.wall.curtain", "role": "inner_enceinte", "placement": { "zone": "perimeter", "relativeTo": "enceinte.outer#1", "spacing": 12000 }, "params": { "height": 11000 } },
+    { "ref": "tower#1", "type": "castle.tower.round", "count": 4, "placement": { "zone": "corner", "relativeTo": "enceinte.inner#1" }, "params": { "diameter": 10000 } },
+    { "ref": "keep#1", "type": "castle.keep.round", "role": "keep", "placement": { "zone": "free" } },
+    { "ref": "gate#1", "type": "castle.entrance.gatehouse", "role": "main_gate", "placement": { "zone": "axis", "relativeTo": "enceinte.outer#1" } },
+    { "ref": "logis#1", "type": "castle.residential.lodging", "placement": { "zone": "perimeter", "relativeTo": "enceinte.inner#1" } }
+  ],
+  "relations": [
+    { "kind": "encloses", "from": "enceinte.outer#1", "to": "enceinte.inner#1" },
+    { "kind": "flanks", "from": "tower#1", "to": "enceinte.inner#1" },
+    { "kind": "connects", "from": "gate#1", "to": "enceinte.outer#1" }
+  ],
+  "constraints": [
+    { "domain": "history", "strength": "strict", "statement": "Éléments compatibles avec le domaine royal français, 1201–1300." },
+    { "domain": "user", "strength": "soft", "statement": "Emprise au sol dans le rectangle 120 × 60 m de l'éperon." }
+  ],
+  "generation": { "mode": "historically_constrained", "variants": 1, "seed": 1204 },
+  "assumptions": [
+    "Région supposée : Île-de-France (« forteresse royale française »).",
+    "Donjon supposé circulaire, conformément aux donjons philippiens.",
+    "La double enceinte est interprétée comme une enceinte basse extérieure et une enceinte haute intérieure."
+  ]
+}

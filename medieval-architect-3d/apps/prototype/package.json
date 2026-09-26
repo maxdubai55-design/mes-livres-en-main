@@ -1,0 +1,25 @@
+{
+  "name": "@ma3d/prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lot 0 : prototype technique (scène, instanciation, géométrie en worker, mesures).",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "bench": "vite build && node bench/run.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ma3d/core": "0.1.0",
+    "@ma3d/geometry": "0.1.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "@webgpu/types": "^0.1.74",
+    "typescript": "^5.9.0",
+    "vite": "^8.3.1"
+  }
+}

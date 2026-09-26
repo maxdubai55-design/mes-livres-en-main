@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medieval Architect 3D — prototype lot 0</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #1d1f22; color: #e8e4dc; font: 13px/1.4 system-ui, sans-serif; }
+      #view { position: fixed; inset: 0; }
+      #hud { position: fixed; top: 12px; left: 12px; background: rgba(20, 20, 22, 0.82); padding: 10px 14px; border-radius: 6px; min-width: 260px; }
+      #hud h1 { font-size: 13px; margin: 0 0 6px; font-weight: 600; }
+      #hud dl { display: grid; grid-template-columns: auto auto; gap: 2px 14px; margin: 0; }
+      #hud dt { opacity: 0.7; }
+      #hud dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+      #hud label { display: block; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <div id="hud">
+      <h1>Prototype technique — lot 0</h1>
+      <dl id="stats"></dl>
+      <label>Hauteur des tours <input id="height" type="range" min="8000" max="35000" step="500" value="18000" /></label>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

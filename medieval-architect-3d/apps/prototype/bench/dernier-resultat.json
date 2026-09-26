@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-26T11:34:06.488Z",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36",
+  "result": {
+    "backend": "WebGL 2 (WebGPU trop ancien pour Three.js (vues de texture sans « swizzle »))",
+    "fps": 2.2970903522205206,
+    "drawCalls": 28,
+    "triangles": 223243,
+    "towerInstances": 200,
+    "firstBuildMs": 238.10000000009313,
+    "lastRegenMs": 143.80000000004657,
+    "workerComputeMs": 8.800000000046566,
+    "allWatertight": true,
+    "ready": true
+  },
+  "errors": []
+}
