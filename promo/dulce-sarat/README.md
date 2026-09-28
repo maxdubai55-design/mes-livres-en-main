@@ -15,3 +15,7 @@ Musique : arpège de guitare synthétisé par le script (aucun droit à payer).
 
 Régénérer : `pip install pillow numpy imageio-ffmpeg && python3 make_video.py`
 Polices : Great Vibes et Montserrat (Google Fonts, licence SIL OFL).
+
+## Version dynamique
+
+`dulce-sarat-pub-20s-dynamique.mp4` (script `make_video_dynamique.py`) : 26 plans calés sur une musique à 120 BPM (batterie, basse, arpèges), gros plans découpés dans les photos, zoom et flou de mouvement à chaque coupe, mots-étiquettes rouges qui rebondissent (CUMIN, CITRON, À OFFRIR…), flashs aux changements de partie, rafale de 8 plans avant le carton final.
