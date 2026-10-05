@@ -1,0 +1,285 @@
+<title>Entre deux frères</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital@0;1&family=DM+Mono:wght@400&display=swap">
+<style>
+/* Layout : une salle de projection. Un seul écran 16:9, le film au centre, les commandes en dessous. Look sombre assumé, un seul thème. */
+:root {
+  --salle: #121110;
+  --ecran: #050505;
+  --argent: #e9e3d8;
+  --argent-doux: #a59e92;
+  --ambre: #c8a26a;
+  --trait: #2b2825;
+  --f-titre: "Libre Caslon Display", "Libre Caslon Text", Georgia, serif;
+  --f-texte: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --f-outil: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--salle);
+  color: var(--argent);
+  font-family: var(--f-texte);
+  padding-inline: 16px;
+  padding-block: 24px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+}
+.salle { width: 100%; max-width: 1100px; display: grid; gap: 14px; }
+.ecran {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--ecran);
+  overflow: hidden;
+  border-radius: 3px;
+  box-shadow: 0 30px 80px -30px rgba(0,0,0,.8);
+}
+canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.titre, .legende {
+  position: absolute;
+  left: 0; right: 0;
+  margin: 0;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  pointer-events: none;
+  text-shadow: 0 2px 18px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.9);
+}
+.titre {
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--f-titre);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 6.2vw, 4.6rem);
+  letter-spacing: .02em;
+  text-wrap: balance;
+}
+.legende {
+  bottom: 7%;
+  padding-inline: 8%;
+  font-style: italic;
+  font-size: clamp(.95rem, 2.1vw, 1.45rem);
+  line-height: 1.45;
+  text-wrap: balance;
+}
+.on { opacity: 1; }
+.commandes {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--f-outil);
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--argent-doux);
+  flex-wrap: wrap;
+}
+.commandes button {
+  font: inherit;
+  color: var(--argent);
+  background: transparent;
+  border: 1px solid var(--trait);
+  border-radius: 2px;
+  padding: 7px 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.commandes button:hover { border-color: var(--ambre); color: var(--ambre); }
+.commandes button:focus-visible { outline: 2px solid var(--ambre); outline-offset: 2px; }
+.piste { flex: 1 1 160px; min-width: 0; height: 2px; background: var(--trait); position: relative; }
+.piste span { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--ambre); }
+.temps { font-variant-numeric: tabular-nums; }
+</style>
+
+<main class="salle">
+  <div class="ecran" id="ecran">
+    <canvas id="film" aria-label="Animation de la photographie de deux frères enfants, en noir et blanc"></canvas>
+    <h1 class="titre" id="titre">Entre deux frères</h1>
+    <p class="legende" id="legende"></p>
+  </div>
+  <div class="commandes">
+    <button id="lecture" type="button">Pause</button>
+    <button id="reprise" type="button">Depuis le début</button>
+    <div class="piste" aria-hidden="true"><span id="avance"></span></div>
+    <span class="temps" id="temps">00:00 / 00:29</span>
+  </div>
+</main>
+
+<script>
+(() => {
+  const DUREE = 29;
+  const IMG_W = 1800, IMG_H = 1336;
+
+  // Caméra : centre (x, y) en fraction de la photo, zoom relatif au cadrage plein.
+  const PLANS = [
+    { t: 0,    x: .50, y: .50, z: 1.00 },
+    { t: 4.5,  x: .48, y: .47, z: 1.06 },
+    { t: 11.5, x: .31, y: .50, z: 1.55 },
+    { t: 18.5, x: .745, y: .70, z: 1.6 },
+    { t: 25,   x: .52, y: .52, z: 1.08 },
+    { t: 29,   x: .52, y: .52, z: 1.10 }
+  ];
+
+  const TEXTES = [
+    { de: 1.2,  a: 5,    titre: true },
+    { de: 6.8,  a: 11.6, texte: "Le grand a mis la cravate à pois. Il regarde au-dessus de l’appareil, vers quelqu’un qu’on ne voit pas." },
+    { de: 13.6, a: 18.6, texte: "Le petit porte un nœud de ruban trop grand pour lui. Il fixe l’objectif et rit." },
+    { de: 21,   a: 26.4, titre: true }
+  ];
+
+  const calme = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const canvas = document.getElementById("film");
+  const ctx = canvas.getContext("2d");
+  const titre = document.getElementById("titre");
+  const legende = document.getElementById("legende");
+  const avance = document.getElementById("avance");
+  const temps = document.getElementById("temps");
+  const btnLecture = document.getElementById("lecture");
+  const btnReprise = document.getElementById("reprise");
+
+  const photo = new Image();
+  photo.src = "photo.jpg";
+
+  // Grain : quelques tuiles de bruit tirées au hasard à chaque image.
+  const grains = Array.from({ length: 6 }, () => {
+    const c = document.createElement("canvas");
+    c.width = c.height = 220;
+    const g = c.getContext("2d");
+    const d = g.createImageData(220, 220);
+    for (let i = 0; i < d.data.length; i += 4) {
+      const v = Math.random() * 255;
+      d.data[i] = d.data[i + 1] = d.data[i + 2] = v;
+      d.data[i + 3] = 255;
+    }
+    g.putImageData(d, 0, 0);
+    return c;
+  });
+
+  let W = 0, H = 0, dpr = 1;
+  function dimensionner() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    const r = canvas.getBoundingClientRect();
+    W = Math.round(r.width * dpr);
+    H = Math.round(r.height * dpr);
+    canvas.width = W;
+    canvas.height = H;
+  }
+  new ResizeObserver(dimensionner).observe(canvas);
+
+  const adoucir = u => u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+
+  function camera(t) {
+    if (calme) return PLANS[0];
+    let i = 0;
+    while (i < PLANS.length - 2 && t >= PLANS[i + 1].t) i++;
+    const a = PLANS[i], b = PLANS[i + 1];
+    const u = adoucir(Math.min(1, Math.max(0, (t - a.t) / (b.t - a.t))));
+    return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u, z: a.z + (b.z - a.z) * u };
+  }
+
+  function fondu(t) {
+    if (t < 2.5) return t / 2.5;
+    if (t > DUREE - 2.5) return Math.max(0, (DUREE - t) / 2.5);
+    return 1;
+  }
+
+  function dessiner(t) {
+    if (!W || !H) return;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.filter = "none";
+    ctx.fillStyle = "#050505";
+    ctx.fillRect(0, 0, W, H);
+
+    if (photo.complete && photo.naturalWidth) {
+      const cam = camera(t);
+      const base = Math.max(W / IMG_W, H / IMG_H);
+      const s = base * cam.z;
+      const demiL = W / (2 * s), demiH = H / (2 * s);
+      const cx = Math.min(IMG_W - demiL, Math.max(demiL, cam.x * IMG_W));
+      const cy = Math.min(IMG_H - demiH, Math.max(demiH, cam.y * IMG_H));
+      const scintille = calme ? 1 : 1 + (Math.random() - .5) * .035;
+      ctx.globalAlpha = fondu(t);
+      ctx.filter = `sepia(.28) contrast(1.06) brightness(${scintille})`;
+      ctx.drawImage(photo, W / 2 - cx * s, H / 2 - cy * s, IMG_W * s, IMG_H * s);
+      ctx.filter = "none";
+      ctx.globalAlpha = 1;
+    }
+
+    // Vignette
+    const v = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .32, W / 2, H / 2, Math.max(W, H) * .72);
+    v.addColorStop(0, "rgba(0,0,0,0)");
+    v.addColorStop(1, "rgba(0,0,0,.62)");
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, W, H);
+
+    // Bande sombre sous les légendes
+    const bas = ctx.createLinearGradient(0, H * .62, 0, H);
+    bas.addColorStop(0, "rgba(0,0,0,0)");
+    bas.addColorStop(1, "rgba(0,0,0,.7)");
+    ctx.fillStyle = bas;
+    ctx.fillRect(0, H * .62, W, H * .38);
+
+    // Grain
+    if (!calme) {
+      const tuile = grains[(Math.random() * grains.length) | 0];
+      ctx.globalCompositeOperation = "overlay";
+      ctx.globalAlpha = .13;
+      const motif = ctx.createPattern(tuile, "repeat");
+      ctx.save();
+      ctx.translate((Math.random() * 220) | 0, (Math.random() * 220) | 0);
+      ctx.fillStyle = motif;
+      ctx.fillRect(-220, -220, W + 440, H + 440);
+      ctx.restore();
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  let texteCourant = null;
+  function textes(t) {
+    const actif = TEXTES.find(x => t >= x.de && t < x.a) || null;
+    if (actif === texteCourant) return;
+    texteCourant = actif;
+    titre.classList.toggle("on", !!(actif && actif.titre));
+    if (actif && actif.texte) {
+      legende.textContent = actif.texte;
+      legende.classList.add("on");
+    } else {
+      legende.classList.remove("on");
+    }
+  }
+
+  const mmss = s => `00:${String(Math.floor(s)).padStart(2, "0")}`;
+
+  let enLecture = true, debut = performance.now(), position = 0;
+  function boucle(now) {
+    if (enLecture) position = ((now - debut) / 1000) % DUREE;
+    dessiner(position);
+    textes(position);
+    avance.style.width = (position / DUREE * 100) + "%";
+    temps.textContent = `${mmss(position)} / ${mmss(DUREE)}`;
+    requestAnimationFrame(boucle);
+  }
+
+  btnLecture.addEventListener("click", () => {
+    enLecture = !enLecture;
+    if (enLecture) debut = performance.now() - position * 1000;
+    btnLecture.textContent = enLecture ? "Pause" : "Lecture";
+  });
+  btnReprise.addEventListener("click", () => {
+    position = 0;
+    debut = performance.now();
+    texteCourant = undefined;
+    if (!enLecture) { enLecture = true; btnLecture.textContent = "Pause"; }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space" && e.target === document.body) { e.preventDefault(); btnLecture.click(); }
+  });
+
+  dimensionner();
+  requestAnimationFrame(boucle);
+})();
+</script>
