@@ -1,0 +1,1683 @@
+<title>Jules Verne — Voyageur de l'Impossible</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap">
+
+<style>
+:root {
+  --bg: #050a14;
+  --fg: #e8dcc8;
+  --gold: #c9a84c;
+  --gold-dim: #8a6d2f;
+  --ocean: #0d2137;
+  --ocean-deep: #061018;
+  --muted: #6a7a8a;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  margin: 0;
+  overflow: hidden;
+  font-family: 'EB Garamond', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === CANVAS === */
+#c {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* === CINEMATIC BARS === */
+.letterbox {
+  position: fixed;
+  left: 0; right: 0;
+  height: clamp(30px, 6vh, 60px);
+  background: #000;
+  z-index: 80;
+  pointer-events: none;
+}
+.letterbox.top { top: 0; }
+.letterbox.bottom { bottom: 0; }
+
+/* === VIGNETTE === */
+.vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%);
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* === FADE OVERLAY === */
+#fade {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 70;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+}
+#fade.active { opacity: 1; }
+
+/* === START SCREEN === */
+#start-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #0a1628 0%, #030710 100%);
+  transition: opacity 1.5s ease;
+}
+#start-screen.leaving { opacity: 0; pointer-events: none; }
+
+.start-content {
+  text-align: center;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.start-content h1 {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: clamp(2.2rem, 7vw, 5rem);
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  margin: 0 0 0.2em;
+  text-shadow: 0 0 40px rgba(201,168,76,0.3);
+  animation: titlePulse 4s ease-in-out infinite;
+}
+
+.start-subtitle {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: clamp(1rem, 2.5vw, 1.6rem);
+  color: var(--fg);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin: 0 0 0.8em;
+  opacity: 0.8;
+}
+
+.start-dates {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--gold-dim);
+  font-style: italic;
+  margin: 0 0 2.5em;
+}
+
+#start-btn {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  padding: 0.8em 2.5em;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+#start-btn:hover, #start-btn:focus-visible {
+  background: rgba(201,168,76,0.1);
+  border-color: var(--gold);
+  box-shadow: 0 0 30px rgba(201,168,76,0.15);
+}
+
+@keyframes titlePulse {
+  0%, 100% { text-shadow: 0 0 40px rgba(201,168,76,0.3); }
+  50% { text-shadow: 0 0 60px rgba(201,168,76,0.5); }
+}
+
+/* === CHAPTER TITLE OVERLAY === */
+#chapter-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 65;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  width: 90%;
+  max-width: 700px;
+}
+#chapter-card.visible { opacity: 1; }
+
+.ch-num {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+  letter-spacing: 0.4em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.6em;
+}
+.ch-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.3em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.ch-year {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: var(--gold-dim);
+  font-style: italic;
+}
+
+/* === NARRATION === */
+#narration {
+  position: fixed;
+  bottom: clamp(60px, 10vh, 100px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 680px;
+  text-align: center;
+  z-index: 65;
+  pointer-events: none;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--fg);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+#narration .word {
+  display: inline;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+#narration .word.vis { opacity: 1; }
+
+/* === WORK TITLES (Chapter 5) === */
+#work-title {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 64;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+#work-title.visible { opacity: 1; }
+#work-title .wt-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--fg);
+  text-shadow: 0 0 30px rgba(201,168,76,0.3);
+}
+#work-title .wt-year {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  color: var(--gold);
+  font-style: italic;
+  margin-top: 0.3em;
+}
+
+/* === CONTROLS === */
+#controls {
+  position: fixed;
+  bottom: clamp(4px, 1.5vh, 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 90;
+  padding: 6px 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+#controls.visible { opacity: 1; }
+#controls:hover { opacity: 1 !important; }
+
+.ctrl-btn {
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+  padding: 4px 8px;
+  font-family: system-ui, sans-serif;
+}
+.ctrl-btn:hover, .ctrl-btn:focus-visible { opacity: 1; }
+
+#timeline {
+  width: clamp(120px, 30vw, 300px);
+  height: 3px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+#progress {
+  height: 100%;
+  background: var(--gold-dim);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.3s linear;
+}
+
+.chapter-dots {
+  position: absolute;
+  top: -3px;
+  width: 100%;
+  height: 9px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transition: background 0.3s;
+}
+.dot.active { background: var(--gold); }
+
+/* === END SCREEN === */
+#end-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 2s ease;
+  pointer-events: none;
+}
+#end-screen.visible { opacity: 1; pointer-events: auto; }
+.end-content {
+  text-align: center;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.end-content h2 {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--gold-dim);
+  letter-spacing: 0.3em;
+  margin: 0 0 1em;
+}
+.end-content p {
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  color: var(--muted);
+  margin: 0.3em 0;
+}
+#replay-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-dim);
+  background: transparent;
+  border: 1px solid rgba(138,109,47,0.4);
+  padding: 0.6em 2em;
+  cursor: pointer;
+  margin-top: 2em;
+  transition: all 0.3s;
+}
+#replay-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* === FILM GRAIN === */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+}
+.grain canvas { width: 100%; height: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<!-- Start Screen -->
+<div id="start-screen">
+  <div class="start-content">
+    <h1>JULES VERNE</h1>
+    <p class="start-subtitle">Voyageur de l'Impossible</p>
+    <p class="start-dates">Nantes, 1828 — Amiens, 1905</p>
+    <button id="start-btn">Entrer dans le voyage</button>
+  </div>
+</div>
+
+<!-- 3D Canvas -->
+<canvas id="c"></canvas>
+
+<!-- Cinematic overlays -->
+<div class="vignette"></div>
+<div class="grain"><canvas id="grain-canvas"></canvas></div>
+<div class="letterbox top"></div>
+<div class="letterbox bottom"></div>
+<div id="fade"></div>
+
+<!-- Content overlays -->
+<div id="chapter-card">
+  <div class="ch-num"></div>
+  <div class="ch-title"></div>
+  <div class="ch-year"></div>
+</div>
+<div id="narration"></div>
+<div id="work-title">
+  <div class="wt-name"></div>
+  <div class="wt-year"></div>
+</div>
+
+<!-- Controls -->
+<div id="controls">
+  <button class="ctrl-btn" id="prev-btn" aria-label="Chapitre précédent">&lsaquo;</button>
+  <div id="timeline">
+    <div id="progress"></div>
+    <div class="chapter-dots" id="dots"></div>
+  </div>
+  <button class="ctrl-btn" id="next-btn" aria-label="Chapitre suivant">&rsaquo;</button>
+  <button class="ctrl-btn" id="play-btn" aria-label="Pause">&#9646;&#9646;</button>
+</div>
+
+<!-- End Screen -->
+<div id="end-screen">
+  <div class="end-content">
+    <h2>FIN</h2>
+    <p style="font-family:'Cinzel',serif;font-size:clamp(1rem,2vw,1.3rem);color:var(--fg);margin-bottom:0.5em;">Jules Gabriel Verne</p>
+    <p>Nantes, 8 février 1828 — Amiens, 24 mars 1905</p>
+    <p>62 romans &middot; 18 nouvelles &middot; Plus de 100 langues</p>
+    <button id="replay-btn">Revoir le voyage</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/* ============================================================
+   JULES VERNE — VOYAGEUR DE L'IMPOSSIBLE
+   Cinematic 3D Biography
+   ============================================================ */
+
+const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
+const QUALITY = IS_MOBILE ? 0 : 1;
+const PCOUNT = QUALITY ? 1200 : 500;
+const OCEAN_SEG = QUALITY ? 100 : 50;
+
+// ─── CHAPTER DATA ────────────────────────────────────────────
+
+const CHAPTERS = [
+  {
+    num: '', title: 'JULES VERNE', subtitle: 'Voyageur de l\'Impossible', year: '1828 — 1905',
+    narration: '',
+    duration: 10000,
+    cam: { s:[0,8,35], e:[0,3,18], ls:[0,0,0], le:[0,-1,0] },
+    fog: { color: 0x050a14, density: 0.012 },
+    light: { dir: 0x334466, dirI: 0.4, amb: 0x0a0a1a, ambI: 0.2 },
+    oceanColor: 0x081828, oceanY: -3, waveAmp: 1.2
+  },
+  {
+    num: 'Chapitre I', title: 'L\'Enfant de la Loire', subtitle: '', year: '1828',
+    narration: 'Le 8 février 1828, sur l\'île Feydeau, au cœur de Nantes, naît Jules Gabriel Verne. Fils d\'un avoué, l\'enfant grandit bercé par le spectacle des grands voiliers remontant la Loire, des quais où s\'échangent les récits d\'outre-mer.',
+    duration: 16000,
+    cam: { s:[-15,6,20], e:[12,4,14], ls:[0,2,-5], le:[0,2,-5] },
+    fog: { color: 0x1a1510, density: 0.018 },
+    light: { dir: 0xddaa66, dirI: 0.8, amb: 0x2a1a0a, ambI: 0.35 },
+    oceanColor: 0x1a3a2a, oceanY: -1, waveAmp: 0.5
+  },
+  {
+    num: 'Chapitre II', title: 'Les Lumières de Paris', subtitle: '', year: '1847',
+    narration: 'En 1847, son père l\'envoie à Paris étudier le droit. Mais le jeune homme s\'enivre de théâtre. Il fréquente les salons, rencontre Alexandre Dumas, écrit des pièces et des nouvelles. Le droit attendra.',
+    duration: 14000,
+    cam: { s:[-8,5,18], e:[8,6,12], ls:[0,4,0], le:[0,4,-2] },
+    fog: { color: 0x0d0d15, density: 0.025 },
+    light: { dir: 0xffcc77, dirI: 0.5, amb: 0x151018, ambI: 0.3 },
+    oceanColor: 0x0a0a15, oceanY: -8, waveAmp: 0.2
+  },
+  {
+    num: 'Chapitre III', title: 'La Naissance d\'un Visionnaire', subtitle: '', year: '1862',
+    narration: 'En 1862, Pierre-Jules Hetzel, le plus grand éditeur de son temps, lit le manuscrit de Cinq semaines en ballon. Il reconnaît une voix singulière. Un pacte est scellé : Verne lui livrera deux volumes par an. Les Voyages extraordinaires viennent de naître.',
+    duration: 16000,
+    cam: { s:[5,4,10], e:[-2,3,6], ls:[0,2.5,0], le:[0,2.5,0] },
+    fog: { color: 0x0f0a06, density: 0.03 },
+    light: { dir: 0xffaa44, dirI: 0.3, amb: 0x1a0f05, ambI: 0.25 },
+    oceanColor: 0x0a0808, oceanY: -10, waveAmp: 0.1
+  },
+  {
+    num: 'Chapitre IV', title: 'Les Voyages Extraordinaires', subtitle: '', year: '1863 — 1880',
+    narration: 'Soixante-deux romans. Dix-huit nouvelles. Du centre de la Terre au fond des océans, de la Lune aux glaces du pôle. Quarante ans d\'écriture ininterrompue.',
+    duration: 32000,
+    cam: { s:[0,5,25], e:[0,5,25], ls:[0,3,0], le:[0,3,0] },
+    fog: { color: 0x060810, density: 0.008 },
+    light: { dir: 0x6688cc, dirI: 0.7, amb: 0x101828, ambI: 0.4 },
+    oceanColor: 0x0a1e3a, oceanY: -4, waveAmp: 0.8,
+    works: [
+      { name: 'Cinq semaines en ballon', year: '1863', at: 0.0 },
+      { name: 'Voyage au centre de la Terre', year: '1864', at: 0.14 },
+      { name: 'De la Terre à la Lune', year: '1865', at: 0.28 },
+      { name: 'Vingt mille lieues sous les mers', year: '1870', at: 0.42 },
+      { name: 'Le Tour du monde en 80 jours', year: '1872', at: 0.56 },
+      { name: 'L\'Île mystérieuse', year: '1874', at: 0.70 },
+      { name: 'Michel Strogoff', year: '1876', at: 0.84 }
+    ]
+  },
+  {
+    num: 'Chapitre V', title: 'Le Navigateur', subtitle: '', year: '1867 — 1886',
+    narration: 'Verne ne se contente pas d\'imaginer les voyages. À bord de ses yachts, les Saint-Michel, il sillonne l\'Atlantique, la Méditerranée, la mer du Nord. L\'Écosse, la Scandinavie, l\'Afrique du Nord — chaque escale nourrit un roman.',
+    duration: 16000,
+    cam: { s:[-12,5,20], e:[15,4,10], ls:[0,1,-5], le:[5,1,-5] },
+    fog: { color: 0x0a1828, density: 0.01 },
+    light: { dir: 0x88bbee, dirI: 1.0, amb: 0x1a2a3a, ambI: 0.4 },
+    oceanColor: 0x0d3050, oceanY: -2, waveAmp: 1.5
+  },
+  {
+    num: 'Chapitre VI', title: 'L\'Ombre et le Silence', subtitle: '', year: '1886',
+    narration: 'Le 9 mars 1886. Son neveu Gaston tire sur lui à bout portant. La balle se loge dans la jambe gauche. Verne boitera jusqu\'à la fin. Huit jours plus tard, Hetzel meurt. Deux coups en huit jours.',
+    duration: 14000,
+    cam: { s:[0,4,12], e:[0,3,10], ls:[0,2,0], le:[0,2,0] },
+    fog: { color: 0x080808, density: 0.04 },
+    light: { dir: 0x443333, dirI: 0.2, amb: 0x0a0808, ambI: 0.15 },
+    oceanColor: 0x0a0808, oceanY: -10, waveAmp: 0.3
+  },
+  {
+    num: 'Chapitre VII', title: 'Le Crépuscule d\'un Géant', subtitle: '', year: '1886 — 1905',
+    narration: 'Retiré dans sa maison du boulevard Longueville, Verne continue d\'écrire. Élu conseiller municipal d\'Amiens, il finance un cirque, défend les bibliothèques. Le diabète avance, la vue décline. Ses derniers romans noircissent.',
+    duration: 16000,
+    cam: { s:[6,5,14], e:[-3,4,10], ls:[0,3,0], le:[0,3,0] },
+    fog: { color: 0x0f0a06, density: 0.025 },
+    light: { dir: 0xcc8844, dirI: 0.4, amb: 0x1a1008, ambI: 0.25 },
+    oceanColor: 0x0a0806, oceanY: -8, waveAmp: 0.2
+  },
+  {
+    num: 'Épilogue', title: 'L\'Éternité', subtitle: '', year: '24 mars 1905',
+    narration: 'Le 24 mars 1905, Jules Verne s\'éteint à Amiens. Soixante-dix-sept ans. Plus de cent langues de traduction. Des centaines d\'adaptations au cinéma. L\'un des auteurs les plus lus de l\'histoire humaine. Le voyageur est arrivé.',
+    duration: 18000,
+    cam: { s:[0,3,15], e:[0,12,20], ls:[0,3,0], le:[0,5,0] },
+    fog: { color: 0x050510, density: 0.006 },
+    light: { dir: 0xccaa66, dirI: 0.8, amb: 0x1a1830, ambI: 0.35 },
+    oceanColor: 0x080818, oceanY: -5, waveAmp: 0.4
+  }
+];
+
+// ─── THREE.JS SETUP ──────────────────────────────────────────
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: !IS_MOBILE });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.outputEncoding = THREE.sRGBEncoding;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050a14);
+scene.fog = new THREE.FogExp2(0x050a14, 0.012);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+camera.position.set(0, 8, 35);
+
+// Lights
+const dirLight = new THREE.DirectionalLight(0x334466, 0.4);
+dirLight.position.set(5, 10, 5);
+scene.add(dirLight);
+
+const ambLight = new THREE.AmbientLight(0x0a0a1a, 0.2);
+scene.add(ambLight);
+
+// ─── SHARED ELEMENTS ─────────────────────────────────────────
+
+// Ocean
+const oceanGeo = new THREE.PlaneGeometry(300, 300, OCEAN_SEG, OCEAN_SEG);
+const oceanMat = new THREE.MeshStandardMaterial({
+  color: 0x081828, metalness: 0.85, roughness: 0.25,
+  envMapIntensity: 0.5
+});
+const ocean = new THREE.Mesh(oceanGeo, oceanMat);
+ocean.rotation.x = -Math.PI / 2;
+ocean.position.y = -3;
+scene.add(ocean);
+
+// Starfield
+const STAR_COUNT = QUALITY ? 3000 : 1500;
+const starGeo = new THREE.BufferGeometry();
+const starPos = new Float32Array(STAR_COUNT * 3);
+const starSizes = new Float32Array(STAR_COUNT);
+for (let i = 0; i < STAR_COUNT; i++) {
+  const th = Math.random() * Math.PI * 2;
+  const ph = Math.acos(Math.random() * 2 - 1);
+  const r = 120 + Math.random() * 80;
+  starPos[i*3] = r * Math.sin(ph) * Math.cos(th);
+  starPos[i*3+1] = Math.abs(r * Math.cos(ph));
+  starPos[i*3+2] = r * Math.sin(ph) * Math.sin(th);
+  starSizes[i] = 0.3 + Math.random() * 1.2;
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+starGeo.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
+const starMat = new THREE.PointsMaterial({
+  color: 0xffeedd, size: 0.5, sizeAttenuation: true,
+  transparent: true, opacity: 0.8
+});
+const starfield = new THREE.Points(starGeo, starMat);
+scene.add(starfield);
+
+// Dynamic particles
+const partGeo = new THREE.BufferGeometry();
+const partPos = new Float32Array(PCOUNT * 3);
+const partCol = new Float32Array(PCOUNT * 3);
+const partVel = new Float32Array(PCOUNT * 3);
+for (let i = 0; i < PCOUNT; i++) {
+  partPos[i*3] = (Math.random() - 0.5) * 60;
+  partPos[i*3+1] = Math.random() * 30 - 5;
+  partPos[i*3+2] = (Math.random() - 0.5) * 60;
+  partCol[i*3] = partCol[i*3+1] = partCol[i*3+2] = 1;
+  partVel[i*3] = (Math.random()-0.5)*0.01;
+  partVel[i*3+1] = (Math.random()-0.5)*0.01;
+  partVel[i*3+2] = (Math.random()-0.5)*0.01;
+}
+partGeo.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+partGeo.setAttribute('color', new THREE.BufferAttribute(partCol, 3));
+const partMat = new THREE.PointsMaterial({
+  size: 0.12, vertexColors: true, transparent: true, opacity: 0.6,
+  sizeAttenuation: true, depthWrite: false
+});
+const particles = new THREE.Points(partGeo, partMat);
+scene.add(particles);
+
+// ─── OBJECT FACTORIES ────────────────────────────────────────
+
+function createShip(s) {
+  const g = new THREE.Group();
+  const hullG = new THREE.BoxGeometry(1.6*s, 0.5*s, 4.5*s);
+  const wood = new THREE.MeshStandardMaterial({color:0x4a3728,roughness:0.8});
+  const hull = new THREE.Mesh(hullG, wood);
+  g.add(hull);
+  const mastG = new THREE.CylinderGeometry(0.04*s,0.04*s,3.5*s,6);
+  const mast = new THREE.Mesh(mastG, new THREE.MeshStandardMaterial({color:0x3a2a1a}));
+  mast.position.y = 2*s;
+  g.add(mast);
+  const sailG = new THREE.PlaneGeometry(1.2*s, 2.2*s);
+  const sail = new THREE.Mesh(sailG, new THREE.MeshStandardMaterial({color:0xddccaa,side:THREE.DoubleSide,roughness:0.9}));
+  sail.position.set(0.2*s, 2.3*s, 0);
+  sail.rotation.y = 0.15;
+  g.add(sail);
+  const mast2G = new THREE.CylinderGeometry(0.03*s,0.03*s,2.5*s,6);
+  const mast2 = new THREE.Mesh(mast2G, new THREE.MeshStandardMaterial({color:0x3a2a1a}));
+  mast2.position.set(0, 1.5*s, -1.2*s);
+  g.add(mast2);
+  const sail2 = new THREE.Mesh(new THREE.PlaneGeometry(0.9*s,1.6*s),
+    new THREE.MeshStandardMaterial({color:0xccbb99,side:THREE.DoubleSide,roughness:0.9}));
+  sail2.position.set(0.15*s, 1.5*s, -1.2*s);
+  sail2.rotation.y = 0.1;
+  g.add(sail2);
+  return g;
+}
+
+function createSubmarine(s) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({color:0x2a3a4a,metalness:0.85,roughness:0.25});
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.6*s,0.6*s,7*s,16), mat);
+  body.rotation.z = Math.PI/2;
+  g.add(body);
+  const bow = new THREE.Mesh(new THREE.SphereGeometry(0.6*s,12,12,0,Math.PI*2,0,Math.PI/2), mat);
+  bow.rotation.z = -Math.PI/2;
+  bow.position.x = 3.5*s;
+  g.add(bow);
+  const stern = new THREE.Mesh(new THREE.ConeGeometry(0.6*s,1.5*s,12), mat);
+  stern.rotation.z = Math.PI/2;
+  stern.position.x = -4*s;
+  g.add(stern);
+  const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.25*s,0.3*s,0.8*s,8), mat);
+  tower.position.set(0.5*s, 0.8*s, 0);
+  g.add(tower);
+  const porthole = new THREE.Mesh(new THREE.SphereGeometry(0.08*s,8,8),
+    new THREE.MeshStandardMaterial({color:0xaacc88,emissive:0x446633,emissiveIntensity:0.5}));
+  for (let i = 0; i < 5; i++) {
+    const p = porthole.clone();
+    p.position.set(-1.5*s + i*0.8*s, 0, 0.6*s);
+    g.add(p);
+  }
+  return g;
+}
+
+function createBalloon(s) {
+  const g = new THREE.Group();
+  const envMat = new THREE.MeshStandardMaterial({color:0xcc4422,roughness:0.7});
+  const env = new THREE.Mesh(new THREE.SphereGeometry(2*s,20,20), envMat);
+  env.scale.y = 1.3;
+  env.position.y = 4*s;
+  g.add(env);
+  const stripe = new THREE.Mesh(new THREE.TorusGeometry(1.95*s,0.15*s,6,20),
+    new THREE.MeshStandardMaterial({color:0xddaa33}));
+  stripe.position.y = 4*s;
+  stripe.rotation.x = Math.PI/2;
+  g.add(stripe);
+  const baskMat = new THREE.MeshStandardMaterial({color:0x8B7355,roughness:0.9});
+  const bask = new THREE.Mesh(new THREE.BoxGeometry(0.8*s,0.5*s,0.8*s), baskMat);
+  bask.position.y = 0.5*s;
+  g.add(bask);
+  const ropeMat = new THREE.LineBasicMaterial({color:0x8B7355});
+  [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([dx,dz]) => {
+    const pts = [
+      new THREE.Vector3(dx*0.35*s, 0.75*s, dz*0.35*s),
+      new THREE.Vector3(dx*0.8*s, 2.2*s, dz*0.8*s)
+    ];
+    g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), ropeMat));
+  });
+  return g;
+}
+
+function createRocket(s) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({color:0xcccccc,metalness:0.7,roughness:0.3});
+  g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.4*s,0.5*s,4*s,12), mat));
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.4*s,1.5*s,12), mat);
+  nose.position.y = 2.75*s;
+  g.add(nose);
+  const finMat = new THREE.MeshStandardMaterial({color:0xaa3333,roughness:0.5});
+  for (let i=0;i<4;i++){
+    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.05*s,1*s,0.6*s), finMat);
+    const angle = (Math.PI/2)*i;
+    fin.position.set(Math.sin(angle)*0.5*s, -1.5*s, Math.cos(angle)*0.5*s);
+    fin.rotation.y = angle;
+    g.add(fin);
+  }
+  const flame = new THREE.Mesh(new THREE.ConeGeometry(0.35*s,2*s,8),
+    new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:0.7}));
+  flame.position.y = -3*s;
+  flame.rotation.x = Math.PI;
+  g.add(flame);
+  g._flame = flame;
+  return g;
+}
+
+function createGlobe(s) {
+  const g = new THREE.Group();
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(s,24,24),
+    new THREE.MeshStandardMaterial({color:0x2255aa,roughness:0.6}));
+  g.add(sphere);
+  const wire = new THREE.Mesh(new THREE.SphereGeometry(s*1.01,12,12),
+    new THREE.MeshBasicMaterial({color:0x5588bb,wireframe:true,transparent:true,opacity:0.25}));
+  g.add(wire);
+  const continents = new THREE.Mesh(new THREE.SphereGeometry(s*1.005,24,24),
+    new THREE.MeshStandardMaterial({color:0x3a8a3a,transparent:true,opacity:0.4,roughness:0.8}));
+  g.add(continents);
+  const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.06*s,0.12*s,0.6*s,6),
+    new THREE.MeshStandardMaterial({color:0x8B7355}));
+  stand.position.y = -(s+0.3);
+  g.add(stand);
+  g.rotation.z = 0.4;
+  return g;
+}
+
+function createBuilding(w,h,d,color) {
+  const mat = new THREE.MeshStandardMaterial({color,roughness:0.85});
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  m.position.y = h/2;
+  return m;
+}
+
+function createBuildingRow(count,startX,z,minH,maxH,baseColor) {
+  const g = new THREE.Group();
+  let x = startX;
+  for (let i=0;i<count;i++){
+    const w = 1.5+Math.random()*2.5;
+    const h = minH+Math.random()*(maxH-minH);
+    const d = 2+Math.random()*1.5;
+    const hsl = new THREE.Color(baseColor);
+    const hue = hsl.getHSL({}).h;
+    const c = new THREE.Color().setHSL(hue, 0.08+Math.random()*0.08, 0.3+Math.random()*0.12);
+    const b = createBuilding(w,h,d,c);
+    b.position.x = x;
+    b.position.z = z;
+    g.add(b);
+    // Windows
+    const winMat = new THREE.MeshBasicMaterial({color:0xffcc66,transparent:true,opacity:0.3+Math.random()*0.4});
+    const rows = Math.floor(h/1.2);
+    const cols = Math.floor(w/0.7);
+    for (let r=0;r<rows;r++){
+      for (let c2=0;c2<cols;c2++){
+        if (Math.random()>0.5) continue;
+        const win = new THREE.Mesh(new THREE.PlaneGeometry(0.3,0.4), winMat);
+        win.position.set(x - w/2 + 0.5 + c2*0.65, 0.8+r*1.1, z+d/2+0.01);
+        g.add(win);
+      }
+    }
+    x += w+0.2;
+  }
+  return g;
+}
+
+function createDesk() {
+  const g = new THREE.Group();
+  const wood = new THREE.MeshStandardMaterial({color:0x5c3a1e,roughness:0.8});
+  const top = new THREE.Mesh(new THREE.BoxGeometry(3,0.1,1.5), wood);
+  top.position.y = 1;
+  g.add(top);
+  const legG = new THREE.CylinderGeometry(0.04,0.04,1,6);
+  [[-1.3,-0.6],[1.3,-0.6],[-1.3,0.6],[1.3,0.6]].forEach(([x,z])=>{
+    const leg = new THREE.Mesh(legG, wood);
+    leg.position.set(x,0.5,z);
+    g.add(leg);
+  });
+  const colors = [0x8b0000,0x006400,0x00008b,0x8b4513,0x4a0080,0x8b6508,0x2a4a2a];
+  colors.forEach((c,i)=>{
+    const book = new THREE.Mesh(new THREE.BoxGeometry(0.25,0.35+Math.random()*0.15,0.15),
+      new THREE.MeshStandardMaterial({color:c,roughness:0.7}));
+    book.position.set(-0.9+i*0.3, 1.2+0.18, 0.3);
+    book.rotation.z = (Math.random()-0.5)*0.08;
+    g.add(book);
+  });
+  const lampBase = new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.2,0.1,8),
+    new THREE.MeshStandardMaterial({color:0x8B7355}));
+  lampBase.position.set(1,1.05,0);
+  g.add(lampBase);
+  const lampArm = new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.8,6),
+    new THREE.MeshStandardMaterial({color:0x8B7355}));
+  lampArm.position.set(1,1.45,0);
+  g.add(lampArm);
+  const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.3,0.25,12,1,true),
+    new THREE.MeshStandardMaterial({color:0x886633,side:THREE.DoubleSide,transparent:true,opacity:0.8}));
+  lampShade.position.set(1,1.9,0);
+  lampShade.rotation.x = Math.PI;
+  g.add(lampShade);
+  const lampLight = new THREE.PointLight(0xffaa44, 1.5, 10);
+  lampLight.position.set(1,1.8,0);
+  g.add(lampLight);
+  return g;
+}
+
+function createYacht(s) {
+  const g = new THREE.Group();
+  const hullMat = new THREE.MeshStandardMaterial({color:0xeeeeee,roughness:0.4});
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(2*s,0.6*s,6*s), hullMat);
+  g.add(hull);
+  const bowG = new THREE.ConeGeometry(1*s,2*s,4);
+  const bow = new THREE.Mesh(bowG, hullMat);
+  bow.rotation.x = -Math.PI/2;
+  bow.rotation.z = Math.PI/4;
+  bow.position.z = -4*s;
+  g.add(bow);
+  const cabinMat = new THREE.MeshStandardMaterial({color:0x8B7355,roughness:0.7});
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.4*s,0.8*s,2*s), cabinMat);
+  cabin.position.set(0,0.7*s,0.5*s);
+  g.add(cabin);
+  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.04*s,0.04*s,4*s,6),
+    new THREE.MeshStandardMaterial({color:0x3a2a1a}));
+  mast.position.set(0,2.3*s,-0.5*s);
+  g.add(mast);
+  const funnel = new THREE.Mesh(new THREE.CylinderGeometry(0.15*s,0.2*s,1.2*s,8),
+    new THREE.MeshStandardMaterial({color:0x333333}));
+  funnel.position.set(0,1.2*s,1*s);
+  g.add(funnel);
+  return g;
+}
+
+function createLamp(s) {
+  const g = new THREE.Group();
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03*s,0.04*s,3*s,6),
+    new THREE.MeshStandardMaterial({color:0x333333}));
+  pole.position.y = 1.5*s;
+  g.add(pole);
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12*s,8,8),
+    new THREE.MeshBasicMaterial({color:0xffcc66}));
+  bulb.position.y = 3.1*s;
+  g.add(bulb);
+  const light = new THREE.PointLight(0xffcc66, 0.8, 8*s);
+  light.position.y = 3.1*s;
+  g.add(light);
+  return g;
+}
+
+function createTombstone(s) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({color:0x888888,roughness:0.6});
+  const base = new THREE.Mesh(new THREE.BoxGeometry(2*s,0.4*s,3*s), mat);
+  base.position.y = 0.2*s;
+  g.add(base);
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(1.5*s,0.3*s,2.5*s), mat);
+  slab.position.y = 0.55*s;
+  slab.rotation.x = -0.1;
+  g.add(slab);
+  // Rising figure (Verne's famous tomb sculpture)
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.2*s,0.25*s,1.8*s,8),
+    new THREE.MeshStandardMaterial({color:0x99aa88,roughness:0.5}));
+  body.position.set(0,1.6*s,-0.3*s);
+  body.rotation.x = -0.3;
+  g.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.2*s,10,10),
+    new THREE.MeshStandardMaterial({color:0x99aa88,roughness:0.5}));
+  head.position.set(0,2.6*s,-0.5*s);
+  g.add(head);
+  const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.06*s,0.06*s,1.2*s,6),
+    new THREE.MeshStandardMaterial({color:0x99aa88,roughness:0.5}));
+  arm.position.set(0.1*s,2.3*s,-0.4*s);
+  arm.rotation.z = -0.5;
+  arm.rotation.x = -0.8;
+  g.add(arm);
+  return g;
+}
+
+// ─── BUILD CHAPTER SCENES ────────────────────────────────────
+
+const groups = [];
+const chapterObjects = {};
+
+for (let i = 0; i < CHAPTERS.length; i++) {
+  const g = new THREE.Group();
+  g.visible = false;
+  scene.add(g);
+  groups.push(g);
+}
+
+// Ch 0: Prologue — submarine gliding
+(function(){
+  const g = groups[0];
+  const sub = createSubmarine(1);
+  sub.position.set(8, -5, -15);
+  sub.rotation.y = 0.3;
+  g.add(sub);
+  chapterObjects[0] = { sub };
+})();
+
+// Ch 1: Nantes — harbor, ships, buildings
+(function(){
+  const g = groups[1];
+  const buildings = createBuildingRow(8, -12, -8, 3, 7, 0x8a7a6a);
+  g.add(buildings);
+  const dock = new THREE.Mesh(new THREE.BoxGeometry(30, 0.3, 3),
+    new THREE.MeshStandardMaterial({color:0x5a4a3a,roughness:0.9}));
+  dock.position.set(0, -0.5, -5);
+  g.add(dock);
+  const ship1 = createShip(1);
+  ship1.position.set(-6, 0, 0);
+  ship1.rotation.y = 0.2;
+  g.add(ship1);
+  const ship2 = createShip(0.8);
+  ship2.position.set(4, 0, 2);
+  ship2.rotation.y = -0.15;
+  g.add(ship2);
+  const ship3 = createShip(1.2);
+  ship3.position.set(12, 0, -2);
+  ship3.rotation.y = 0.4;
+  g.add(ship3);
+  chapterObjects[1] = { ship1, ship2, ship3 };
+})();
+
+// Ch 2: Paris — buildings, street lamps, theater
+(function(){
+  const g = groups[2];
+  const left = createBuildingRow(6, -10, -6, 5, 10, 0x7a7080);
+  g.add(left);
+  const right = createBuildingRow(6, -10, 6, 5, 10, 0x7a7080);
+  g.add(right);
+  const street = new THREE.Mesh(new THREE.PlaneGeometry(25, 10),
+    new THREE.MeshStandardMaterial({color:0x3a3530,roughness:0.95}));
+  street.rotation.x = -Math.PI/2;
+  street.position.y = -0.5;
+  g.add(street);
+  for (let i = 0; i < 5; i++) {
+    const lamp = createLamp(1);
+    lamp.position.set(-8+i*4, -0.5, -3);
+    g.add(lamp);
+  }
+  // Theater glow
+  const theaterLight = new THREE.PointLight(0xffaa44, 2, 15);
+  theaterLight.position.set(0, 5, -6);
+  g.add(theaterLight);
+  const theaterSign = new THREE.Mesh(new THREE.PlaneGeometry(4, 1.5),
+    new THREE.MeshBasicMaterial({color:0xffcc66,transparent:true,opacity:0.2}));
+  theaterSign.position.set(0, 7, -5.5);
+  g.add(theaterSign);
+})();
+
+// Ch 3: Hetzel's study — desk, books, lamp, globe
+(function(){
+  const g = groups[3];
+  const desk = createDesk();
+  desk.position.set(0, 0, 0);
+  g.add(desk);
+  const globe = createGlobe(0.5);
+  globe.position.set(-1.8, 1.5, -0.3);
+  g.add(globe);
+  chapterObjects[3] = { globe };
+  // Bookshelves
+  const shelfMat = new THREE.MeshStandardMaterial({color:0x3a2a1a,roughness:0.8});
+  for (let r=0;r<3;r++){
+    const shelf = new THREE.Mesh(new THREE.BoxGeometry(5,0.08,0.4), shelfMat);
+    shelf.position.set(0, 1.5+r*1.2, -2);
+    g.add(shelf);
+    for (let b=0;b<12;b++){
+      const bookC = [0x8b0000,0x006400,0x00008b,0x8b4513,0x4a0080,0x8b6508][b%6];
+      const book = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.8+Math.random()*0.3, 0.3),
+        new THREE.MeshStandardMaterial({color:bookC,roughness:0.8}));
+      book.position.set(-2.2+b*0.37, 2+r*1.2, -2);
+      g.add(book);
+    }
+  }
+  // Room walls (subtle)
+  const wallMat = new THREE.MeshStandardMaterial({color:0x2a1f15,roughness:0.9,side:THREE.DoubleSide});
+  const backWall = new THREE.Mesh(new THREE.PlaneGeometry(8,6), wallMat);
+  backWall.position.set(0,3,-2.5);
+  g.add(backWall);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(8,6),
+    new THREE.MeshStandardMaterial({color:0x3a2a1a,roughness:0.9}));
+  floor.rotation.x = -Math.PI/2;
+  floor.position.y = 0;
+  g.add(floor);
+})();
+
+// Ch 4: Les Voyages Extraordinaires — iconic objects
+(function(){
+  const g = groups[4];
+  const balloon = createBalloon(1.2);
+  balloon.position.set(-10, 8, -8);
+  g.add(balloon);
+  const sub = createSubmarine(0.8);
+  sub.position.set(8, -3, -10);
+  sub.rotation.y = -0.3;
+  g.add(sub);
+  const rocket = createRocket(0.8);
+  rocket.position.set(12, 6, 5);
+  g.add(rocket);
+  const globe = createGlobe(2);
+  globe.position.set(0, 3, 0);
+  g.add(globe);
+  // Volcano (Journey to the Center)
+  const volcanoMat = new THREE.MeshStandardMaterial({color:0x4a3a2a,roughness:0.9});
+  const volcano = new THREE.Mesh(new THREE.ConeGeometry(3,5,12), volcanoMat);
+  volcano.position.set(-8, -1.5, 8);
+  g.add(volcano);
+  const lava = new THREE.Mesh(new THREE.ConeGeometry(0.8,1,8),
+    new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.6}));
+  lava.position.set(-8, 2, 8);
+  g.add(lava);
+  const lavaLight = new THREE.PointLight(0xff4400, 1, 10);
+  lavaLight.position.set(-8, 3, 8);
+  g.add(lavaLight);
+  // Island (L'Île mystérieuse)
+  const island = new THREE.Mesh(new THREE.ConeGeometry(2,1.5,8),
+    new THREE.MeshStandardMaterial({color:0x3a6a3a,roughness:0.9}));
+  island.position.set(6, -3.5, -18);
+  g.add(island);
+
+  chapterObjects[4] = { balloon, sub, rocket, globe, lava };
+})();
+
+// Ch 5: Saint-Michel — yacht on open sea
+(function(){
+  const g = groups[5];
+  const yacht = createYacht(1);
+  yacht.position.set(0, 0.3, -5);
+  yacht.rotation.y = 0.3;
+  g.add(yacht);
+  // Distant coastline
+  const coast = new THREE.Mesh(new THREE.BoxGeometry(40, 2, 3),
+    new THREE.MeshStandardMaterial({color:0x5a6a5a,roughness:0.9}));
+  coast.position.set(20, -1, -25);
+  coast.rotation.y = -0.3;
+  g.add(coast);
+  chapterObjects[5] = { yacht };
+})();
+
+// Ch 6: L'Ombre — dark scene, single lamp
+(function(){
+  const g = groups[6];
+  const lamp = createLamp(1.2);
+  lamp.position.set(0, -0.5, 0);
+  g.add(lamp);
+  const building = createBuilding(6, 8, 4, 0x2a2020);
+  building.position.set(0, 0, -5);
+  g.add(building);
+  // Dark figure silhouette
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.3, 1.8, 8),
+    new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.9}));
+  body.position.set(2, 0.9, 2);
+  g.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8),
+    new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.9}));
+  head.position.set(2, 2, 2);
+  g.add(head);
+})();
+
+// Ch 7: Amiens — house, autumn warmth
+(function(){
+  const g = groups[7];
+  // House facade
+  const house = createBuilding(6, 5, 4, 0x8a7a6a);
+  house.position.set(0, 0, -4);
+  g.add(house);
+  // Roof
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(4.5, 2, 4),
+    new THREE.MeshStandardMaterial({color:0x5a3a2a,roughness:0.9}));
+  roof.position.set(0, 6, -4);
+  roof.rotation.y = Math.PI/4;
+  g.add(roof);
+  // Door
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(1, 2),
+    new THREE.MeshStandardMaterial({color:0x3a2a1a}));
+  door.position.set(0, 1, -1.99);
+  g.add(door);
+  // Windows with warm light
+  const winMat = new THREE.MeshBasicMaterial({color:0xffaa44,transparent:true,opacity:0.6});
+  [[-1.5,3],[-1.5,1.5],[1.5,3],[1.5,1.5]].forEach(([x,y])=>{
+    const win = new THREE.Mesh(new THREE.PlaneGeometry(0.8,1), winMat);
+    win.position.set(x,y,-1.99);
+    g.add(win);
+  });
+  const windowLight = new THREE.PointLight(0xffaa44, 1.5, 12);
+  windowLight.position.set(0, 3, -1);
+  g.add(windowLight);
+  // Ground
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(20,20),
+    new THREE.MeshStandardMaterial({color:0x3a3020,roughness:0.95}));
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -0.5;
+  g.add(ground);
+})();
+
+// Ch 8: Épilogue — tomb, stars, ascension
+(function(){
+  const g = groups[8];
+  const tomb = createTombstone(1.2);
+  tomb.position.set(0, 0, 0);
+  g.add(tomb);
+  // Golden pillar of light
+  const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 1, 20, 8, 1, true),
+    new THREE.MeshBasicMaterial({color:0xccaa66,transparent:true,opacity:0.1,side:THREE.DoubleSide}));
+  pillar.position.set(0, 10, 0);
+  g.add(pillar);
+  const goldLight = new THREE.PointLight(0xccaa44, 2, 30);
+  goldLight.position.set(0, 8, 0);
+  g.add(goldLight);
+  chapterObjects[8] = { pillar };
+})();
+
+// ─── ANIMATION HELPERS ───────────────────────────────────────
+
+function lerp(a,b,t){ return a+(b-a)*t; }
+function easeIO(t){ return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
+function easeOut(t){ return 1-Math.pow(1-t,3); }
+
+function updateOcean(time, amp) {
+  const pos = oceanGeo.attributes.position;
+  const arr = pos.array;
+  for (let i = 0; i < pos.count; i++) {
+    const x = arr[i*3];
+    const y = arr[i*3+1];
+    arr[i*3+2] = (
+      Math.sin(x*0.04 + time*0.8) * amp * 0.6 +
+      Math.cos(y*0.06 + time*0.5) * amp * 0.4 +
+      Math.sin((x+y)*0.03 + time*0.3) * amp * 0.3
+    );
+  }
+  pos.needsUpdate = true;
+  oceanGeo.computeVertexNormals();
+}
+
+function updateParticlesBehavior(time, chIdx) {
+  const p = partGeo.attributes.position.array;
+  const c = partGeo.attributes.color.array;
+
+  for (let i = 0; i < PCOUNT; i++) {
+    const i3 = i*3;
+    switch(chIdx) {
+      case 0: // Stars drift
+        p[i3] += Math.sin(time*0.2+i)*0.003;
+        p[i3+1] += Math.cos(time*0.15+i*0.7)*0.002;
+        c[i3]=c[i3+1]=c[i3+2]=0.8;
+        break;
+      case 1: // Sea spray
+        p[i3] += (Math.random()-0.5)*0.05;
+        p[i3+1] += 0.02;
+        p[i3+2] += (Math.random()-0.5)*0.05;
+        if(p[i3+1]>8){p[i3+1]=-1;p[i3]=(Math.random()-0.5)*40;p[i3+2]=(Math.random()-0.5)*40;}
+        c[i3]=0.9;c[i3+1]=0.9;c[i3+2]=1;
+        break;
+      case 2: // Dust motes
+        p[i3] += Math.sin(time+i)*0.005;
+        p[i3+1] += Math.cos(time*0.7+i)*0.003;
+        c[i3]=1;c[i3+1]=0.9;c[i3+2]=0.6;
+        break;
+      case 3: // Warm dust
+        p[i3] += Math.sin(time*0.5+i)*0.002;
+        p[i3+1] += Math.cos(time*0.3+i)*0.001;
+        c[i3]=1;c[i3+1]=0.85;c[i3+2]=0.5;
+        break;
+      case 4: // Magic sparkles
+        p[i3] += Math.sin(time*2+i*0.5)*0.02;
+        p[i3+1] += Math.cos(time*1.5+i*0.3)*0.02;
+        p[i3+2] += Math.sin(time+i*0.7)*0.02;
+        const hue = (i/PCOUNT+time*0.1)%1;
+        const col = new THREE.Color().setHSL(hue, 0.6, 0.7);
+        c[i3]=col.r;c[i3+1]=col.g;c[i3+2]=col.b;
+        break;
+      case 5: // Sea spray strong
+        p[i3] += (Math.random()-0.5)*0.08;
+        p[i3+1] += 0.03+Math.random()*0.02;
+        p[i3+2] += (Math.random()-0.5)*0.08;
+        if(p[i3+1]>10){p[i3+1]=-2;p[i3]=(Math.random()-0.5)*50;p[i3+2]=(Math.random()-0.5)*50;}
+        c[i3]=0.85;c[i3+1]=0.9;c[i3+2]=1;
+        break;
+      case 6: // Rain
+        p[i3] += (Math.random()-0.5)*0.01;
+        p[i3+1] -= 0.25;
+        if(p[i3+1]<-5){p[i3+1]=20;p[i3]=(Math.random()-0.5)*30;p[i3+2]=(Math.random()-0.5)*30;}
+        c[i3]=0.5;c[i3+1]=0.5;c[i3+2]=0.6;
+        break;
+      case 7: // Autumn leaves
+        p[i3] += Math.sin(time*0.3+i)*0.01;
+        p[i3+1] -= 0.015+Math.random()*0.005;
+        p[i3+2] += Math.cos(time*0.4+i)*0.008;
+        if(p[i3+1]<-2){p[i3+1]=12;p[i3]=(Math.random()-0.5)*20;p[i3+2]=(Math.random()-0.5)*20;}
+        const lc = Math.random()>0.5?[1,0.6,0.1]:[0.9,0.4,0.05];
+        c[i3]=lc[0];c[i3+1]=lc[1];c[i3+2]=lc[2];
+        break;
+      case 8: // Ascending golden sparks
+        p[i3] += Math.sin(time+i)*0.01;
+        p[i3+1] += 0.02+Math.random()*0.01;
+        p[i3+2] += Math.cos(time+i)*0.01;
+        if(p[i3+1]>25){p[i3+1]=-5;p[i3]=(Math.random()-0.5)*40;p[i3+2]=(Math.random()-0.5)*40;}
+        c[i3]=1;c[i3+1]=0.85;c[i3+2]=0.4;
+        break;
+    }
+  }
+  partGeo.attributes.position.needsUpdate = true;
+  partGeo.attributes.color.needsUpdate = true;
+}
+
+// Reset particle positions for a new chapter
+function resetParticles() {
+  const p = partGeo.attributes.position.array;
+  for (let i=0;i<PCOUNT;i++){
+    p[i*3]=(Math.random()-0.5)*50;
+    p[i*3+1]=Math.random()*25-5;
+    p[i*3+2]=(Math.random()-0.5)*50;
+  }
+  partGeo.attributes.position.needsUpdate = true;
+}
+
+// ─── UI FUNCTIONS ────────────────────────────────────────────
+
+const chCardEl = document.getElementById('chapter-card');
+const chNumEl = chCardEl.querySelector('.ch-num');
+const chTitleEl = chCardEl.querySelector('.ch-title');
+const chYearEl = chCardEl.querySelector('.ch-year');
+const narrEl = document.getElementById('narration');
+const workTitleEl = document.getElementById('work-title');
+const fadeEl = document.getElementById('fade');
+const progressEl = document.getElementById('progress');
+const controlsEl = document.getElementById('controls');
+const dotsEl = document.getElementById('dots');
+const playBtn = document.getElementById('play-btn');
+
+// Create dots
+CHAPTERS.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = 'dot';
+  dotsEl.appendChild(d);
+});
+const dotEls = dotsEl.querySelectorAll('.dot');
+
+function showChapterCard(ch) {
+  chNumEl.textContent = ch.num;
+  chTitleEl.textContent = ch.title;
+  chYearEl.textContent = ch.year;
+  chCardEl.classList.add('visible');
+}
+function hideChapterCard() { chCardEl.classList.remove('visible'); }
+
+let narrationTimer = null;
+function showNarration(text) {
+  if (!text) return;
+  clearTimeout(narrationTimer);
+  narrEl.innerHTML = '';
+  const words = text.split(' ');
+  words.forEach((w,i) => {
+    const sp = document.createElement('span');
+    sp.className = 'word';
+    sp.textContent = w + ' ';
+    narrEl.appendChild(sp);
+  });
+  const spans = narrEl.querySelectorAll('.word');
+  spans.forEach((sp,i) => {
+    setTimeout(() => sp.classList.add('vis'), 200 + i * 100);
+  });
+}
+function hideNarration() {
+  narrEl.querySelectorAll('.word').forEach(sp => sp.classList.remove('vis'));
+  setTimeout(() => { narrEl.innerHTML = ''; }, 600);
+}
+
+let workTitleTimer = null;
+function showWorkTitle(name, year) {
+  clearTimeout(workTitleTimer);
+  workTitleEl.querySelector('.wt-name').textContent = name;
+  workTitleEl.querySelector('.wt-year').textContent = year;
+  workTitleEl.classList.add('visible');
+}
+function hideWorkTitle() {
+  workTitleEl.classList.remove('visible');
+}
+
+// ─── AUDIO ───────────────────────────────────────────────────
+
+let audioCtx = null;
+let audioNodes = {};
+
+function initAudio() {
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const bufSize = 2 * audioCtx.sampleRate;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random()*2-1;
+
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buf;
+    noise.loop = true;
+
+    const lpf = audioCtx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.value = 300;
+
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.value = 0.05;
+
+    const osc1 = audioCtx.createOscillator();
+    osc1.type = 'sine';
+    osc1.frequency.value = 55;
+
+    const osc2 = audioCtx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.value = 82.41;
+
+    const droneGain = audioCtx.createGain();
+    droneGain.gain.value = 0.03;
+
+    const masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.7;
+
+    noise.connect(lpf);
+    lpf.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    osc1.connect(droneGain);
+    osc2.connect(droneGain);
+    droneGain.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
+
+    noise.start();
+    osc1.start();
+    osc2.start();
+
+    audioNodes = { lpf, noiseGain, droneGain, osc1, osc2, masterGain };
+  } catch(e) {}
+}
+
+function setAudioMood(filterF, noiseV, droneV, f1, f2) {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime + 2;
+  audioNodes.lpf.frequency.linearRampToValueAtTime(filterF, t);
+  audioNodes.noiseGain.gain.linearRampToValueAtTime(noiseV, t);
+  audioNodes.droneGain.gain.linearRampToValueAtTime(droneV, t);
+  audioNodes.osc1.frequency.linearRampToValueAtTime(f1, t);
+  audioNodes.osc2.frequency.linearRampToValueAtTime(f2, t);
+}
+
+const AUDIO_MOODS = [
+  [300, 0.06, 0.03, 55, 82.41],      // 0 Prologue
+  [400, 0.04, 0.025, 65.41, 98],      // 1 Nantes
+  [200, 0.02, 0.03, 73.42, 110],      // 2 Paris
+  [150, 0.015, 0.035, 55, 82.41],     // 3 Hetzel
+  [350, 0.04, 0.04, 65.41, 98],       // 4 Oeuvres
+  [500, 0.07, 0.025, 55, 82.41],      // 5 Saint-Michel
+  [100, 0.08, 0.02, 41.2, 61.74],     // 6 L'Ombre
+  [180, 0.02, 0.03, 55, 73.42],       // 7 Amiens
+  [250, 0.03, 0.04, 65.41, 130.81]    // 8 Épilogue
+];
+
+// ─── PLAYBACK STATE ──────────────────────────────────────────
+
+const state = {
+  playing: false,
+  chapter: -1,
+  chapterStart: 0,
+  transitioning: false,
+  started: false
+};
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function goToChapter(idx) {
+  if (idx < 0 || idx >= CHAPTERS.length || state.transitioning) return;
+  state.transitioning = true;
+
+  hideNarration();
+  hideChapterCard();
+  hideWorkTitle();
+
+  fadeEl.classList.add('active');
+  await sleep(1500);
+
+  // Switch scene
+  groups.forEach((g,i) => g.visible = (i===idx));
+  const ch = CHAPTERS[idx];
+
+  // Fog
+  scene.fog.color.set(ch.fog.color);
+  scene.fog.density = ch.fog.density;
+  scene.background.set(ch.fog.color);
+
+  // Lights
+  dirLight.color.set(ch.light.dir);
+  dirLight.intensity = ch.light.dirI;
+  ambLight.color.set(ch.light.amb);
+  ambLight.intensity = ch.light.ambI;
+
+  // Ocean
+  oceanMat.color.set(ch.oceanColor);
+  ocean.position.y = ch.oceanY;
+
+  // Camera
+  camera.position.set(...ch.cam.s);
+
+  // Particles
+  resetParticles();
+
+  // Audio
+  if (AUDIO_MOODS[idx]) setAudioMood(...AUDIO_MOODS[idx]);
+
+  // Update dots
+  dotEls.forEach((d,i) => d.classList.toggle('active', i===idx));
+
+  state.chapter = idx;
+
+  fadeEl.classList.remove('active');
+  await sleep(800);
+
+  showChapterCard(ch);
+  await sleep(3000);
+  hideChapterCard();
+  await sleep(500);
+
+  if (ch.narration) showNarration(ch.narration);
+
+  state.chapterStart = performance.now();
+  state.transitioning = false;
+}
+
+// Per-chapter per-frame updates
+function updateChapterObjects(time, progress) {
+  const idx = state.chapter;
+
+  // Prologue: submarine glides
+  if (idx === 0 && chapterObjects[0]) {
+    const s = chapterObjects[0].sub;
+    s.position.x = 8 - progress * 16;
+    s.position.y = -5 + Math.sin(time) * 0.3;
+  }
+
+  // Nantes: ships bob
+  if (idx === 1 && chapterObjects[1]) {
+    const { ship1, ship2, ship3 } = chapterObjects[1];
+    [ship1,ship2,ship3].forEach((sh,i) => {
+      sh.position.y = Math.sin(time*0.8 + i*2) * 0.2;
+      sh.rotation.z = Math.sin(time*0.5 + i*1.5) * 0.03;
+    });
+  }
+
+  // Hetzel: globe rotates
+  if (idx === 3 && chapterObjects[3]) {
+    chapterObjects[3].globe.rotation.y = time * 0.3;
+  }
+
+  // Oeuvres: everything animates + work titles
+  if (idx === 4 && chapterObjects[4]) {
+    const o = chapterObjects[4];
+    o.balloon.position.y = 8 + Math.sin(time*0.5)*1;
+    o.balloon.rotation.y = time*0.1;
+    o.sub.position.x = 8 + Math.sin(time*0.3)*2;
+    o.sub.position.y = -3 + Math.sin(time*0.7)*0.5;
+    o.rocket.position.y = 6 + Math.sin(time*0.4)*2;
+    if (o.rocket._flame) o.rocket._flame.scale.y = 0.8+Math.sin(time*5)*0.3;
+    o.globe.rotation.y = time*0.2;
+    o.lava.scale.y = 0.8+Math.sin(time*3)*0.2;
+    o.lava.material.opacity = 0.4+Math.sin(time*2)*0.2;
+
+    // Camera orbits the scene
+    const orbitAngle = progress * Math.PI * 2;
+    camera.position.x = Math.sin(orbitAngle) * 22;
+    camera.position.z = Math.cos(orbitAngle) * 22;
+    camera.position.y = 5 + Math.sin(progress * Math.PI) * 3;
+
+    // Work titles
+    const ch = CHAPTERS[4];
+    if (ch.works) {
+      let currentWork = null;
+      for (let w = ch.works.length-1; w >= 0; w--) {
+        if (progress >= ch.works[w].at) { currentWork = ch.works[w]; break; }
+      }
+      if (currentWork) {
+        const wt = workTitleEl.querySelector('.wt-name');
+        if (wt.textContent !== currentWork.name) {
+          hideWorkTitle();
+          setTimeout(() => showWorkTitle(currentWork.name, currentWork.year), 400);
+        }
+      }
+    }
+  }
+
+  // Saint-Michel: yacht bobs
+  if (idx === 5 && chapterObjects[5]) {
+    const y = chapterObjects[5].yacht;
+    y.position.y = 0.3 + Math.sin(time*0.6)*0.3;
+    y.rotation.z = Math.sin(time*0.4)*0.04;
+    y.rotation.x = Math.sin(time*0.3)*0.02;
+  }
+
+  // Épilogue: pillar pulses
+  if (idx === 8 && chapterObjects[8]) {
+    const pl = chapterObjects[8].pillar;
+    pl.material.opacity = 0.08 + Math.sin(time*0.5)*0.04;
+    pl.rotation.y = time * 0.1;
+  }
+}
+
+// ─── FILM GRAIN ──────────────────────────────────────────────
+
+const grainCanvas = document.getElementById('grain-canvas');
+const grainCtx = grainCanvas.getContext('2d');
+function renderGrain() {
+  const w = 128, h = 128;
+  grainCanvas.width = w;
+  grainCanvas.height = h;
+  const imgData = grainCtx.createImageData(w, h);
+  const d = imgData.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const v = Math.random() * 255;
+    d[i] = d[i+1] = d[i+2] = v;
+    d[i+3] = 255;
+  }
+  grainCtx.putImageData(imgData, 0, 0);
+}
+
+// ─── RENDER LOOP ─────────────────────────────────────────────
+
+let frameCount = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  const time = now * 0.001;
+
+  // Update ocean
+  const ch = CHAPTERS[state.chapter] || CHAPTERS[0];
+  updateOcean(time, ch.waveAmp || 0.5);
+
+  // Update starfield twinkle
+  starfield.rotation.y = time * 0.005;
+
+  if (state.playing && !state.transitioning && state.chapter >= 0) {
+    const elapsed = now - state.chapterStart;
+    const duration = CHAPTERS[state.chapter].duration;
+    const progress = Math.min(elapsed / duration, 1);
+    const t = easeIO(progress);
+
+    // Camera interpolation (unless ch4 handles its own)
+    if (state.chapter !== 4) {
+      const c = CHAPTERS[state.chapter].cam;
+      camera.position.set(
+        lerp(c.s[0], c.e[0], t),
+        lerp(c.s[1], c.e[1], t),
+        lerp(c.s[2], c.e[2], t)
+      );
+      camera.lookAt(
+        lerp(c.ls[0], c.le[0], t),
+        lerp(c.ls[1], c.le[1], t),
+        lerp(c.ls[2], c.le[2], t)
+      );
+    }
+
+    // Per-chapter updates
+    updateChapterObjects(time, progress);
+
+    // Progress bar
+    const totalChapters = CHAPTERS.length;
+    const overallProgress = (state.chapter + progress) / totalChapters * 100;
+    progressEl.style.width = overallProgress + '%';
+
+    // Advance chapter
+    if (progress >= 1) {
+      if (state.chapter < CHAPTERS.length - 1) {
+        goToChapter(state.chapter + 1);
+      } else {
+        state.playing = false;
+        hideNarration();
+        hideWorkTitle();
+        setTimeout(() => {
+          document.getElementById('end-screen').classList.add('visible');
+        }, 2000);
+      }
+    }
+  }
+
+  // Update particles
+  updateParticlesBehavior(time, state.chapter >= 0 ? state.chapter : 0);
+
+  // Film grain (update every 3 frames)
+  if (frameCount % 3 === 0) renderGrain();
+  frameCount++;
+
+  renderer.render(scene, camera);
+}
+
+// ─── CONTROLS ────────────────────────────────────────────────
+
+document.getElementById('start-btn').addEventListener('click', () => {
+  const ss = document.getElementById('start-screen');
+  ss.classList.add('leaving');
+  initAudio();
+  setTimeout(() => {
+    ss.hidden = true;
+    controlsEl.classList.add('visible');
+    state.playing = true;
+    state.started = true;
+    goToChapter(0);
+  }, 1500);
+});
+
+playBtn.addEventListener('click', () => {
+  if (!state.started) return;
+  state.playing = !state.playing;
+  playBtn.innerHTML = state.playing ? '&#9646;&#9646;' : '&#9654;';
+  if (state.playing && !state.transitioning) {
+    state.chapterStart = performance.now() - (state.chapterStart > 0 ?
+      (performance.now() - state.chapterStart) : 0);
+  }
+});
+
+document.getElementById('prev-btn').addEventListener('click', () => {
+  if (state.chapter > 0) goToChapter(state.chapter - 1);
+});
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (state.chapter < CHAPTERS.length - 1) goToChapter(state.chapter + 1);
+});
+
+document.getElementById('replay-btn').addEventListener('click', () => {
+  document.getElementById('end-screen').classList.remove('visible');
+  state.playing = true;
+  playBtn.innerHTML = '&#9646;&#9646;';
+  goToChapter(0);
+});
+
+// Timeline click
+document.getElementById('timeline').addEventListener('click', (e) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const ratio = (e.clientX - rect.left) / rect.width;
+  const targetChapter = Math.floor(ratio * CHAPTERS.length);
+  goToChapter(Math.max(0, Math.min(targetChapter, CHAPTERS.length - 1)));
+});
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  if (!state.started) return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    playBtn.click();
+  } else if (e.code === 'ArrowRight') {
+    document.getElementById('next-btn').click();
+  } else if (e.code === 'ArrowLeft') {
+    document.getElementById('prev-btn').click();
+  }
+});
+
+// Resize
+window.addEventListener('resize', () => {
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+});
+
+// Auto-hide controls
+let controlsTimeout;
+function showControls() {
+  controlsEl.style.opacity = '1';
+  clearTimeout(controlsTimeout);
+  controlsTimeout = setTimeout(() => {
+    if (state.playing) controlsEl.style.opacity = '0.3';
+  }, 3000);
+}
+document.addEventListener('mousemove', showControls);
+document.addEventListener('touchstart', showControls);
+
+// ─── START ───────────────────────────────────────────────────
+
+animate();
+
+</script>
