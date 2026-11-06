@@ -273,6 +273,26 @@ function T(color, emissive) {
   return m;
 }
 
+// r128 defines position/rotation/quaternion/scale as non-writable via defineProperty
+const _OA = Object.assign;
+Object.assign = function(target) {
+  if (target instanceof THREE.Object3D) {
+    for (let i = 1; i < arguments.length; i++) {
+      const src = arguments[i]; if (!src) continue;
+      const keys = Object.keys(src);
+      for (let k = 0; k < keys.length; k++) {
+        const key = keys[k], val = src[key];
+        if ((key==='position'||key==='scale')&&val&&val.isVector3) target[key].copy(val);
+        else if (key==='rotation'&&val&&val.isEuler) target[key].copy(val);
+        else if (key==='quaternion'&&val&&val.isQuaternion) target[key].copy(val);
+        else try{target[key]=val;}catch(e){}
+      }
+    }
+    return target;
+  }
+  return _OA.apply(null, arguments);
+};
+
 // ── Three.js Setup ──
 const cv = document.getElementById('c');
 const R = new THREE.WebGLRenderer({ canvas: cv, antialias: !MB });
