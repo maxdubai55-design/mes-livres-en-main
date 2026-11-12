@@ -85,7 +85,9 @@ def cmd_init(a):
     cfg = lire_json(p / "livre.json")
     cfg["slug"], cfg["annee"] = slug, datetime.date.today().year
     if a.type == "guide":
-        cfg.update(type="guide", mention_genre="guide pratique", fiction=False)
+        cfg.update(type="guide", mention_genre="guide pratique", fiction=False, auteur="Lucien Ligerot")
+        cfg["couverture"].update(modele="serie", collection="Les Petits Guides de Lucien", numero=1, embleme="?", points=["", "", ""],
+                                 accroche="", mention_serie="Gros caractères", fond="#1f5fa8", texte="#16202b", accent="#ffc83d")
         cfg["format"].update(largeur_cm=17.78, hauteur_cm=25.4, papier="blanc", corps=14, interligne=0.78,
                              police_titres="DejaVu Sans", pages_notes=1, marge_ext_cm=1.8, marge_haut_cm=2.0, marge_bas_cm=2.2)
         for f in ("bible.md", "architecture.md", "voix.md"):

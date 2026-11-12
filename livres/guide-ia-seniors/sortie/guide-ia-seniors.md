@@ -1,6 +1,6 @@
 # L’intelligence artificielle, c’est aussi pour vous
 
-Christian Bousquet
+Lucien Ligerot
 
 ### C’est quoi, au juste ?
 
@@ -40,7 +40,7 @@ Un assistant d’intelligence artificielle, c’est ce stagiaire-là. On abrège
 
 Non. Si vous savez envoyer un message à vos enfants, vous savez déjà faire le geste principal : écrire une phrase, puis appuyer sur un bouton pour l’envoyer. Tout le reste de ce fascicule consiste à choisir les bonnes phrases.
 
-Lucien, le voisin de Madeleine, a 81 ans. Il tape avec un seul doigt et il perd ses lunettes deux fois par jour. Depuis le printemps, il demande chaque lundi à son assistant un menu pour la semaine « sans poireaux, parce que je ne les supporte plus ». Vous ferez au moins aussi bien que lui.
+Marcel, le voisin de Madeleine, a 81 ans. Il tape avec un seul doigt et il perd ses lunettes deux fois par jour. Depuis le printemps, il demande chaque lundi à son assistant un menu pour la semaine « sans poireaux, parce que je ne les supporte plus ». Vous ferez au moins aussi bien que lui.
 
 #### Comment lire ce fascicule
 
@@ -172,7 +172,7 @@ Rien ne vous y oblige ; la machine n’a pas d’amour-propre. Beaucoup de gen
 
 ### L’art de bien demander
 
-Lucien avait écrit : « Recette. » L’assistant lui a proposé un gratin dauphinois pour quatre. Lucien vit seul, il est diabétique et il n’a plus de four. La réponse était correcte ; la question, elle, tenait en un mot.
+Marcel avait écrit : « Recette. » L’assistant lui a proposé un gratin dauphinois pour quatre. Marcel vit seul, il est diabétique et il n’a plus de four. La réponse était correcte ; la question, elle, tenait en un mot.
 
 Un assistant ne devine rien. Plus votre demande est précise, plus sa réponse vous ressemble. La méthode qui suit tient en quatre ingrédients, comme une vinaigrette.
 
@@ -304,7 +304,7 @@ Regardez à côté de la case où l’on écrit, ou sur le clavier lui-même. Vo
 
 Certains assistants proposent une vraie conversation parlée : vous posez la question à voix haute, il vous répond à voix haute, comme au téléphone. Le bouton représente souvent des ondes sonores ou un casque. C’est commode quand la vue fatigue, ou quand on a les mains dans la farine.
 
-Lucien s’en sert le soir, dans son fauteuil, pour se faire expliquer les définitions de mots croisés qui lui ont résisté dans la journée, et il lui arrive de répondre « ah, bien sûr » à son téléphone.
+Marcel s’en sert le soir, dans son fauteuil, pour se faire expliquer les définitions de mots croisés qui lui ont résisté dans la journée, et il lui arrive de répondre « ah, bien sûr » à son téléphone.
 
 > **Attention** — Une voix chaleureuse reste la voix d’un programme. Elle peut dire une bêtise avec beaucoup de douceur. Les précautions du chapitre 7 valent à l’oral comme à l’écrit.
 
@@ -346,7 +346,7 @@ Pour faire expliquer un courrier administratif, cachez d’abord avec un papier 
 
 ### Quand la machine se trompe
 
-Un jour, Lucien a demandé à son assistant l’année de la mort d’un chanteur qu’il aimait. La réponse est tombée, nette, avec le jour et le mois. Elle était fausse : le chanteur donnait encore un concert le mois suivant. Lucien en a parlé pendant trois semaines.
+Un jour, Marcel a demandé à son assistant l’année de la mort d’un chanteur qu’il aimait. La réponse est tombée, nette, avec le jour et le mois. Elle était fausse : le chanteur donnait encore un concert le mois suivant. Marcel en a parlé pendant trois semaines.
 
 #### Pourquoi elle se trompe
 

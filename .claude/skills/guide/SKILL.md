@@ -53,6 +53,10 @@ les lignes restantes ; alors seulement `etape <slug> verification`.
 
 ## 4. Titre, quatrième, fabrication
 
+Couverture de collection, identique pour tous les titres : dans `livre.json` → `couverture`, garder `modele: "serie"`
+et la collection, et ne changer que `numero`, `fond` (couleur du titre, voir `livres/SERIE_SENIORS.md`), `embleme`
+(1 à 3 signes), `points` (trois promesses de 30 signes au plus), `accroche` et `quatrieme`. L'auteur est Lucien Ligerot.
+
 Remplir `livre.json` (titre, sous-titre, quatrième, description, 7 mots-clés, catégories, prix, déclaration IA,
 `mentions_supplementaires` avec la date de vérification). Faire valider, `etape <slug> titre_quatrieme`.
 Essai : `livre.py fabriquer <slug> --epreuve`, lire les pages et l'épreuve de couverture en image. Corriger les

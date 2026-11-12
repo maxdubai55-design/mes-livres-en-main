@@ -2,7 +2,7 @@
   "slug": "guide-ia-seniors",
   "titre": "L’intelligence artificielle, c’est aussi pour vous",
   "sous_titre": "Le guide pas à pas pour débuter après 60 ans, sans jargon",
-  "auteur": "Christian Bousquet",
+  "auteur": "Lucien Ligerot",
   "mention_genre": "guide pratique",
   "fiction": false,
   "annee": 2026,
@@ -32,11 +32,22 @@
   },
   "couverture": {
     "image": "",
-    "fond": "#f4ecd8",
-    "texte": "#1d2b3a",
-    "accent": "#b5451b",
+    "fond": "#1f5fa8",
+    "texte": "#16202b",
+    "accent": "#ffc83d",
     "quatrieme": "Votre petit-fils pose une question à son téléphone, et le téléphone répond. Vous aimeriez bien en faire autant, sans passer pour une bête et sans vous faire piéger.\nCe guide part de zéro. Il explique ce qu’est une intelligence artificielle avec des mots de tous les jours, vous accompagne pas à pas jusqu’à votre première conversation, puis vous donne dix idées pour vous en servir : comprendre un courrier, écrire une réclamation, cuisiner avec ce qui reste, préparer un rendez-vous chez le médecin.\nTrois chapitres sont consacrés à ce qu’on vous dit rarement : les erreurs de la machine, ce qu’il ne faut jamais lui confier, et les arnaques à la voix imitée.\nGros caractères, phrases prêtes à recopier, un jeu de vrai ou faux et un aide-mémoire à garder près du téléphone.",
-    "bio": ""
+    "bio": "Lucien Ligerot écrit des guides courts pour celles et ceux qui n’ont pas grandi avec un écran.",
+    "modele": "serie",
+    "collection": "Les Petits Guides de Lucien",
+    "numero": 1,
+    "embleme": "IA",
+    "points": [
+      "Pas à pas, sans jargon",
+      "Des phrases prêtes à recopier",
+      "Les pièges à éviter"
+    ],
+    "accroche": "Vous n’y connaissez rien ? Ce guide est écrit pour vous.",
+    "mention_serie": "Gros caractères"
   },
   "kdp": {
     "description": "<p><b>Un guide en gros caractères pour débuter avec l’intelligence artificielle quand on n’y connaît rien.</b></p><p>Il part de zéro, sans jargon. Vous y trouverez :</p><ul><li>ce qu’est une IA, expliqué avec une image simple ;</li><li>comment choisir et installer un assistant sans tomber sur une imitation ;</li><li>votre première conversation, geste par geste ;</li><li>la méthode des quatre ingrédients pour obtenir une réponse utile ;</li><li>dix demandes prêtes à recopier pour la vie de tous les jours ;</li><li>la dictée à voix haute et l’envoi d’une photo ;</li><li>les erreurs de la machine en matière de santé, d’argent et de droit ;</li><li>ce qu’il ne faut jamais lui confier ;</li><li>les arnaques à la voix imitée et les numéros utiles en France.</li></ul><p>Avec un jeu de vrai ou faux, un lexique et un aide-mémoire à garder près du téléphone.</p><p>Un cadeau utile à offrir à un parent ou à un grand-parent.</p>",

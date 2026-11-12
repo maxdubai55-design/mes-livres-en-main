@@ -16,7 +16,7 @@ arnaques qui se servent de l'IA.
 
 - Aucun jargon ; chaque mot nouveau est expliqué une fois et repris dans le lexique.
 - Des consignes qui ne dépendent pas d'une version d'application : on décrit le geste, pas la position d'un bouton.
-- Deux personnages fil rouge, Madeleine (78 ans) et son voisin Lucien (81 ans).
+- Deux personnages fil rouge, Madeleine (78 ans) et son voisin Marcel (81 ans).
 - Des encadrés « Essayez » avec la phrase exacte à dire ou à écrire, un jeu vrai/faux, un aide-mémoire à cocher.
 - Pas de promesse commerciale. Les limites et les risques occupent trois chapitres sur onze.
 

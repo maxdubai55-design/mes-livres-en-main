@@ -30,3 +30,13 @@ Points de vigilance pour toute la série :
   impression et prévoir une mise à jour annuelle.
 - Pas de capture d'écran ni de logo de marque. Les schémas sont dessinés.
 - Chaque fascicule a son fichier `audits/verification_faits.md`.
+
+## Collection et couverture
+
+- Auteur : **Lucien Ligerot** (pseudonyme). Collection : **Les Petits Guides de Lucien** (nom provisoire, à valider).
+- Maquette unique pour tous les titres (`couverture.modele = "serie"`) : filet de collection, numéro, panneau blanc
+  du titre, emblème rond, trois promesses, auteur. Seuls changent la couleur de fond, l'emblème et les textes.
+- Couleurs retenues : n° 1 IA bleu `#1f5fa8` · n° 2 Internet vert `#1e7a46` · n° 3 Arnaques rouge `#b3261e`.
+  Jaune d'accent commun `#ffc83d`. Les autres titres prendront une couleur chacun (violet, orange brûlé, sarcelle…).
+- Les personnages fil rouge sont Madeleine et Marcel ; aucun personnage ne s'appelle Lucien.
+- Aperçu : `livres/apercu_collection.png`.

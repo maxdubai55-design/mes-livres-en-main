@@ -7,13 +7,13 @@ Document de travail produit automatiquement. Chaque ligne doit être confrontée
 | Personnage | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Madeleine | 4 | · | 1 | · | 1 | · | · | · | 1 | · | 1 |
-| Lucien | 1 | · | · | 2 | · | 1 | 2 | · | · | · | · |
+| Marcel | 1 | · | · | 2 | · | 1 | 2 | · | · | · | · |
 | Suzanne | · | · | · | · | 1 | · | · | · | · | · | · |
 
 ## Âges mentionnés
 
 - `ch01:3` **78 ans** — Madeleine a 78 ans.
-- `ch01:34` **81 ans** — Lucien, le voisin de Madeleine, a 81 ans.
+- `ch01:34` **81 ans** — Marcel, le voisin de Madeleine, a 81 ans.
 - `ch04:9` **81 ans** — « J’ai 81 ans, je vis seul, je suis diabétique. »
 - `ch04:20` **76 ans** — J’ai 76 ans.
 - `ch04:30` **50 ans** — Je voudrais écrire un mot pour les 50 ans de mariage de mes amis.

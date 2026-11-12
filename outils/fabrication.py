@@ -269,7 +269,10 @@ def couverture(p: Path, pages: int) -> dict:
             "fond": cv.get("fond", "#1c2430"), "texte": cv.get("texte", "#f2ead8"), "accent": cv.get("accent", "#c8a45a"),
             "police": fmt.get("police", "Libertinus Serif"), "image": image, "texte_dos": texte_dos,
             "corps_dos": round(corps_dos, 2), "securite_cm": kdp.SECURITE_COUV, "cb": cb,
-            "reserve_code_barres_cm": cb_h + kdp.CODE_BARRES_RETRAIT + 0.6}
+            "reserve_code_barres_cm": cb_h + kdp.CODE_BARRES_RETRAIT + 0.6,
+            "modele": cv.get("modele", "classique"), "collection": cv.get("collection", ""), "numero": cv.get("numero", 1),
+            "embleme": cv.get("embleme", ""), "points": cv.get("points", []), "accroche": cv.get("accroche", ""),
+            "mention_serie": cv.get("mention_serie", "Gros caractères"), "police_titres": fmt.get("police_titres", "DejaVu Sans")}
     slug = cfg["slug"]
     sorties = {"pdf": p / "sortie" / f"{slug}_couverture_KDP.pdf", "epreuve": p / "sortie" / f"{slug}_couverture_EPREUVE.png",
                "ebook": p / "sortie" / f"{slug}_couverture_ebook.jpg"}

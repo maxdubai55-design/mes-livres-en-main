@@ -131,6 +131,15 @@ def couverture(p: Path, info: dict) -> Rapport:
                 r.ajouter("BLOQUANT", "image", f"résolution insuffisante : {dpi:.0f} ppp à la taille d'impression (300 requis)")
     if not info["texte_dos"]:
         r.ajouter("INFO", "dos", f"pas de texte sur le dos ({info['pages']} pages, dos de {dos:.2f} cm ; KDP exige {kdp.PAGES_MIN_TEXTE_DOS} pages au moins)")
+    cvc = cfg.get("couverture", {})
+    if cvc.get("modele") == "serie":
+        for champ in ("collection", "embleme", "accroche"):
+            if not cvc.get(champ):
+                r.ajouter("BLOQUANT", "livre.json", f"couverture.{champ} vide")
+        if len([x for x in cvc.get("points", []) if x.strip()]) != 3:
+            r.ajouter("BLOQUANT", "livre.json", "couverture.points : trois promesses attendues")
+        if any(len(x) > 30 for x in cvc.get("points", [])):
+            r.ajouter("IMPORTANT", "livre.json", "couverture.points : 30 signes au plus par promesse")
     quat = cfg.get("couverture", {}).get("quatrieme", "")
     if not (350 <= len(quat) <= 1300):
         r.ajouter("IMPORTANT", "livre.json", f"quatrième de couverture : {len(quat)} signes (attendu : 350 à 1 300)")
