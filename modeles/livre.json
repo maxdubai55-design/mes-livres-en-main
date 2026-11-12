@@ -1,0 +1,40 @@
+{
+  "slug": "",
+  "titre": "TITRE À DÉFINIR",
+  "sous_titre": "",
+  "auteur": "Christian Bousquet",
+  "mention_genre": "roman",
+  "fiction": true,
+  "annee": 2026,
+  "editeur": "",
+  "isbn": "",
+  "depot_legal": "",
+  "dedicace": "",
+  "exergue": {"texte": "", "source": ""},
+  "chapitres_prevus": 0,
+  "format": {
+    "largeur_cm": 13.34,
+    "hauteur_cm": 20.32,
+    "papier": "creme",
+    "police": "Libertinus Serif",
+    "corps": 11,
+    "interligne": 0.68,
+    "chapitres_en_belle_page": false
+  },
+  "couverture": {
+    "image": "",
+    "fond": "#1c2430",
+    "texte": "#f2ead8",
+    "accent": "#c8a45a",
+    "quatrieme": "",
+    "bio": ""
+  },
+  "kdp": {
+    "description": "",
+    "mots_cles": ["", "", "", "", "", "", ""],
+    "categories": [],
+    "prix_broche_eur": 0,
+    "prix_numerique_eur": 0,
+    "declaration_ia": ""
+  }
+}

@@ -1,4 +1,30 @@
 # mes-livres-en-main
+
+## Atelier d'écriture : du sujet au dépôt KDP
+
+Ce dépôt contient une chaîne complète pour écrire et fabriquer un livre selon la méthode du guide
+« Écrire un roman » (Christian Bousquet, 2026).
+
+Dans Claude Code : **`/livre <votre sujet>`** pour commencer, **`/livre`** pour reprendre.
+
+| Dossier | Contenu |
+|---|---|
+| `CLAUDE.md` | Règles permanentes d'écriture et de contrôle |
+| `.claude/skills/` | Les commandes : concept, bible, architecture, chapitre, audits, verrouillage, fabrication |
+| `outils/` | Contrôles automatiques et fabrication (`python3 outils/livre.py --help`) |
+| `modeles/` | Gabarits d'un nouveau livre |
+| `livres/<slug>/` | Un dossier par livre |
+
+Installation des outils (une fois par session) : `pip install -r requirements.txt`.
+
+Contrôles automatiques : typographie française, tics d'écriture IA, continuité contre le canon, doublons internes,
+conformité KDP du PDF intérieur, de la couverture, de l'EPUB et des métadonnées. Ils ne remplacent ni la relecture
+humaine de l'épreuve, ni un service anti-plagiat externe.
+
+---
+
+## Ancien contenu : site de vente
+
 Ventes livres
 index.html, catalogue.html, produit.html, panier.html, checkout.html, contact.html, apropos.html, styles.css, script.js).
 <!DOCTYPE html>

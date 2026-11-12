@@ -1,0 +1,2 @@
+# Occurrences arbitrées « à conserver » par l'auteur (elles servent la voix, le rythme ou la scène).
+# Format : chNN: fragment exact contenant la formule   —   ou   *: fragment   pour tout le livre.

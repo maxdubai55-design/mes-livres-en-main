@@ -1,0 +1,3 @@
+livres/*/sortie/build/
+__pycache__/
+*.pyc
