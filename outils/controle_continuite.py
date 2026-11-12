@@ -52,7 +52,7 @@ def charger_canon(p):
 def controler(p, chaps) -> tuple[Rapport, str]:
     r = Rapport("Continuité et canon")
     canon, connus, persos = charger_canon(p)
-    if not canon.get("personnages"):
+    if not canon.get("personnages") and not (chaps and chaps[0].guide):
         r.ajouter("BLOQUANT", "canon.json", "aucun personnage au canon : la continuité ne peut pas être contrôlée")
     inconnus, premiere = Counter(), {}
     divergents = defaultdict(set)

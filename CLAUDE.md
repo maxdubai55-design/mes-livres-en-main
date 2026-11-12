@@ -47,6 +47,7 @@ importante, tu donnes un avis éditorial concret, sans complaisance. Si un chapi
   Une ligne `%% partie: Première partie` avant le titre ouvre une partie.
 - Commandes : `/livre` (chef d'orchestre), `/livre-concept`, `/livre-bible`, `/livre-architecture`,
   `/livre-chapitre`, `/livre-audit-bloc`, `/livre-audit-global`, `/livre-verrouillage`, `/livre-fabrication`.
+  Fascicules pratiques pour seniors : `/guide` (série décrite dans `livres/SERIE_SENIORS.md`).
 
 ## Validations de l'auteur
 

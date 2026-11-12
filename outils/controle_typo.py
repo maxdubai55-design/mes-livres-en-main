@@ -14,14 +14,19 @@ CAPITALES = {"Ca": "Ça", "Etait": "Était", "Etaient": "Étaient", "Etat": "Ét
 DOUBLES_ADMIS = {"nous", "vous", "non", "oui", "si", "très", "là", "bon", "ah", "oh", "eh", "ha", "hé", "tu", "que", "en", "plus"}
 
 
-def corriger(texte: str) -> str:
+def corriger(texte: str, guide: bool = False) -> str:
     """Corrections typographiques mécaniques. N'altère jamais les mots ni la syntaxe."""
+    from commun import PREFIXE_GUIDE
     lignes = []
     for ligne in texte.split("\n"):
-        if ligne.startswith(("#", "%%")) or ligne.strip() in ("* * *", "***", "---"):
+        if ligne.startswith(("# ", "%%")) or ligne.strip() in ("* * *", "***", "---") or (ligne.startswith("#") and not guide):
             lignes.append(ligne.rstrip())
             continue
         l = ligne.strip()
+        prefixe = ""
+        m = PREFIXE_GUIDE.match(l) if guide else None
+        if m:
+            prefixe, l = m.group(1), l[m.end():].strip()
         l = l.replace("...", "…")
         l = re.sub(r"(?<=\w)'(?=\w)", "’", l)
         l = re.sub(r"(?<=[ldjmtsnc])'(?=[«\"])", "’", l, flags=re.I)
@@ -59,7 +64,7 @@ def corriger(texte: str) -> str:
         for a, b in CAPITALES.items():
             l = re.sub(rf"\b{a}\b", b, l)
         l = re.sub(r"\bA (?=(?:la|l’|partir|peine|présent|cet|cette|ce|force|mesure|côté|travers|quoi|qui|chaque|cause|moins|défaut|nouveau|vrai|droite|gauche|vous|toi|moi|lui|elle|eux|bientôt|demain|tout|quelle?s?|midi|minuit|\d)\b)", "À ", l)
-        lignes.append(l)
+        lignes.append(prefixe + l)
     res = "\n".join(lignes)
     res = re.sub(r"\n{3,}", "\n\n", res)
     return res.rstrip("\n") + "\n"
@@ -74,14 +79,17 @@ def controler(p, chaps) -> Rapport:
             r.ajouter("BLOQUANT", ch.ref, "titre de chapitre absent (première ligne attendue : « # Titre »)")
         titres.setdefault(ch.titre.lower(), []).append(ch.ref)
         brut = ch.fichier.read_text(encoding="utf-8")
-        if corriger(brut) != brut:
+        if corriger(brut, ch.guide) != brut:
             r.ajouter("IMPORTANT", ch.ref, "typographie non normalisée — lancer : livre.py typo <slug> --corriger")
         ouv = sum(t.count("«") for _, t in ch.paragraphes)
         fer = sum(t.count("»") for _, t in ch.paragraphes)
         if ouv != fer:
             r.ajouter("IMPORTANT", ch.ref, f"guillemets déséquilibrés : {ouv} ouvrants, {fer} fermants")
+        genres = ch.genres
         for num, t in ch.paragraphes:
             ou = f"{ch.ref}:{num}"
+            genre = genres[num]
+            t = t.replace("**", "") if ch.guide else t
             if t.startswith("—"):
                 styles["tiret"] += 1
             elif t.startswith("«"):
@@ -94,14 +102,14 @@ def controler(p, chaps) -> Rapport:
                 r.ajouter("IMPORTANT", ou, "astérisque d'italique non refermé")
             if re.search(r"\*\*|__|^#{1,6} |^>|^\s*[-+] |\]\(|<[a-z/]", t):
                 r.ajouter("IMPORTANT", ou, "résidu de balisage (gras, liste, lien, HTML)")
-            m = re.search(r"\b([A-Za-zÀ-ÿœ]{2,})\s+\1\b", t, re.I)
+            m = re.search(r"(?<![-’])\b([A-Za-zÀ-ÿœ]{2,})\s+\1\b", t, re.I)
             if m and m.group(1).lower() not in DOUBLES_ADMIS:
                 r.ajouter("IMPORTANT", ou, f"mot doublé : « {m.group(0)} »")
             nu = t.replace("*", "").rstrip()
-            if not re.search(r"[.!?…»:—)]$", nu):
+            if (genre == "p" or genre.startswith("encadre")) and not re.search(r"[.!?…»:—)]$", nu):
                 r.ajouter("IMPORTANT", ou, f"paragraphe sans ponctuation finale : « …{nu[-30:]} »")
             debut = re.sub(r"^[—«\s\u00a0\u202f(]+", "", nu)
-            if debut and debut[0].islower():
+            if debut and debut[0].islower() and genre not in ("puce", "case"):
                 r.ajouter("MINEUR", ou, f"paragraphe commençant par une minuscule : « {nu[:30]}… »")
             m = re.search(r"[a-zà-ÿ]\. [a-zà-ÿ]", nu)
             if m:

@@ -1,0 +1,43 @@
+{
+  "personnages": [
+    {
+      "nom": "Madeleine",
+      "alias": [
+        "Mamie"
+      ],
+      "notes": "78 ans, fil rouge"
+    },
+    {
+      "nom": "Lucien",
+      "alias": [],
+      "notes": "81 ans, voisin de Madeleine, diabétique, vit seul, sans four"
+    },
+    {
+      "nom": "Suzanne",
+      "alias": [],
+      "notes": "amie citée dans un exemple"
+    }
+  ],
+  "lieux": [],
+  "autres_noms_propres": [
+    "ChatGPT",
+    "OpenAI",
+    "Gemini",
+    "Google",
+    "Copilot",
+    "Microsoft",
+    "Windows",
+    "Claude",
+    "Anthropic",
+    "Mistral",
+    "Android",
+    "App Store",
+    "Play Store",
+    "Wi-Fi",
+    "Info Escroqueries",
+    "Vitale",
+    "Noël"
+  ],
+  "chronologie": [],
+  "interdits": []
+}

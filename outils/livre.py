@@ -36,7 +36,23 @@ ETAPES = [
     ("fabrication", "Word, PDF, EPUB, couverture", False),
     ("controle_final", "Contrôle final de tous les fichiers", False),
 ]
-IDS = [e[0] for e in ETAPES]
+ETAPES_GUIDE = [
+    ("plan", "Plan du fascicule : lecteur visé, promesse, chapitres", True),
+    ("redaction", "Rédaction, révision et contrôles de chaque chapitre", False),
+    ("verification", "Vérification des faits, numéros, noms de produits (audits/verification_faits.md)", True),
+    ("titre_quatrieme", "Titre, quatrième, métadonnées KDP", True),
+    ("verrouillage", "Contrôle de verrouillage", False),
+    ("fabrication", "Word, PDF, EPUB, couverture", False),
+    ("controle_final", "Contrôle final de tous les fichiers", False),
+]
+
+
+def etapes(p: Path):
+    return ETAPES_GUIDE if commun.est_guide(p) else ETAPES
+
+
+def ids(p: Path):
+    return [e[0] for e in etapes(p)]
 
 
 def aujourdhui() -> str:
@@ -68,6 +84,13 @@ def cmd_init(a):
         (p / d / ".gitkeep").touch()
     cfg = lire_json(p / "livre.json")
     cfg["slug"], cfg["annee"] = slug, datetime.date.today().year
+    if a.type == "guide":
+        cfg.update(type="guide", mention_genre="guide pratique", fiction=False)
+        cfg["format"].update(largeur_cm=17.78, hauteur_cm=25.4, papier="blanc", corps=14, interligne=0.78,
+                             police_titres="DejaVu Sans", pages_notes=1, marge_ext_cm=1.8, marge_haut_cm=2.0, marge_bas_cm=2.2)
+        for f in ("bible.md", "architecture.md", "voix.md"):
+            (p / f).unlink()
+        (p / "plan.md").write_text("# Plan du fascicule\n\n## Lecteur visé\n\n## Promesse\n\n## Chapitres\n", encoding="utf-8")
     ecrire_json(p / "livre.json", cfg)
     ecrire_json(p / "etat.json", {"sujet": a.sujet, "cree": aujourdhui(), "etapes": {}, "versions": [], "verrou": None, "deverrouillages": []})
     (p / "concept.md").write_text(f"# Concept\n\n## Sujet donné par l'auteur\n\n{a.sujet}\n", encoding="utf-8")
@@ -79,7 +102,7 @@ def cmd_etat(a):
     e = etat(p)
     print(f"Livre : {a.slug} — sujet : {e['sujet']}")
     suivante = None
-    for ident, lib, valid in ETAPES:
+    for ident, lib, valid in etapes(p):
         fait = ident in e["etapes"]
         if not fait and suivante is None:
             suivante = ident
@@ -97,7 +120,7 @@ def cmd_etat(a):
 def prealables(p: Path, ident: str) -> list[str]:
     manques = []
     e = etat(p)
-    for prec in IDS[:IDS.index(ident)]:
+    for prec in ids(p)[:ids(p).index(ident)]:
         if prec not in e["etapes"]:
             manques.append(f"étape antérieure non faite : {prec}")
     def plein(nom, mini=400):
@@ -105,6 +128,12 @@ def prealables(p: Path, ident: str) -> list[str]:
         if not f.exists() or len(f.read_text(encoding="utf-8")) < mini:
             manques.append(f"{nom} absent ou trop court")
     cfg = lire_json(p / "livre.json")
+    if ident == "plan":
+        plein("plan.md", 800)
+        if not cfg.get("chapitres_prevus"):
+            manques.append("livre.json : chapitres_prevus non renseigné")
+    if ident == "verification":
+        plein("audits/verification_faits.md", 600)
     if ident in ("concept", "stress_test"):
         plein("concept.md", 1200)
     if ident == "stress_test":
@@ -138,8 +167,8 @@ def prealables(p: Path, ident: str) -> list[str]:
 
 def cmd_etape(a):
     p = projet(a.slug)
-    if a.id not in IDS:
-        raise SystemExit(f"Étape inconnue. Étapes : {', '.join(IDS)}")
+    if a.id not in ids(p):
+        raise SystemExit(f"Étape inconnue. Étapes : {', '.join(ids(p))}")
     manques = prealables(p, a.id)
     if manques:
         print("Étape refusée :")
@@ -157,7 +186,7 @@ def cmd_typo(a):
     n = 0
     for ch in chapitres(p):
         brut = ch.fichier.read_text(encoding="utf-8")
-        neuf = controle_typo.corriger(brut)
+        neuf = controle_typo.corriger(brut, ch.guide)
         if neuf != brut:
             n += 1
             if a.corriger:
@@ -222,7 +251,7 @@ def cmd_version(a):
 def cmd_verrouiller(a):
     p = projet(a.slug)
     e = etat(p)
-    for prec in IDS[:IDS.index("verrouillage")]:
+    for prec in ids(p)[:ids(p).index("verrouillage")]:
         if prec not in e["etapes"]:
             raise SystemExit(f"Verrouillage refusé : étape « {prec} » non faite.")
     chs, rapports = lancer_controles(p)
@@ -326,7 +355,7 @@ def main():
         s = sp.add_parser(nom); s.add_argument("slug"); s.set_defaults(fn=fn)
         for nom_arg, kw in args:
             s.add_argument(nom_arg, **kw)
-    sous("init", cmd_init, ("sujet", {}))
+    sous("init", cmd_init, ("sujet", {}), ("--type", {"choices": ["roman", "guide"], "default": "roman"}))
     sous("etat", cmd_etat)
     sous("etape", cmd_etape, ("id", {}))
     sous("typo", cmd_typo, ("--corriger", {"action": "store_true"}))

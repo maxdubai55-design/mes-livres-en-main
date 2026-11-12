@@ -1,0 +1,66 @@
+{
+  "slug": "guide-ia-seniors",
+  "titre": "L’intelligence artificielle, c’est aussi pour vous",
+  "sous_titre": "Le guide pas à pas pour débuter après 60 ans, sans jargon",
+  "auteur": "Christian Bousquet",
+  "mention_genre": "guide pratique",
+  "fiction": false,
+  "annee": 2026,
+  "editeur": "",
+  "isbn": "",
+  "depot_legal": "",
+  "dedicace": "",
+  "exergue": {
+    "texte": "",
+    "source": ""
+  },
+  "chapitres_prevus": 11,
+  "format": {
+    "largeur_cm": 17.78,
+    "hauteur_cm": 25.4,
+    "papier": "blanc",
+    "police": "Libertinus Serif",
+    "corps": 14,
+    "interligne": 0.78,
+    "chapitres_en_belle_page": false,
+    "police_titres": "DejaVu Sans",
+    "pages_notes": 1,
+    "marge_ext_cm": 1.8,
+    "marge_haut_cm": 2.0,
+    "marge_bas_cm": 2.2,
+    "lignes_notes": 15
+  },
+  "couverture": {
+    "image": "",
+    "fond": "#f4ecd8",
+    "texte": "#1d2b3a",
+    "accent": "#b5451b",
+    "quatrieme": "Votre petit-fils pose une question à son téléphone, et le téléphone répond. Vous aimeriez bien en faire autant, sans passer pour une bête et sans vous faire piéger.\nCe guide part de zéro. Il explique ce qu’est une intelligence artificielle avec des mots de tous les jours, vous accompagne pas à pas jusqu’à votre première conversation, puis vous donne dix idées pour vous en servir : comprendre un courrier, écrire une réclamation, cuisiner avec ce qui reste, préparer un rendez-vous chez le médecin.\nTrois chapitres sont consacrés à ce qu’on vous dit rarement : les erreurs de la machine, ce qu’il ne faut jamais lui confier, et les arnaques à la voix imitée.\nGros caractères, phrases prêtes à recopier, un jeu de vrai ou faux et un aide-mémoire à garder près du téléphone.",
+    "bio": ""
+  },
+  "kdp": {
+    "description": "<p><b>Un guide en gros caractères pour débuter avec l’intelligence artificielle quand on n’y connaît rien.</b></p><p>Il part de zéro, sans jargon. Vous y trouverez :</p><ul><li>ce qu’est une IA, expliqué avec une image simple ;</li><li>comment choisir et installer un assistant sans tomber sur une imitation ;</li><li>votre première conversation, geste par geste ;</li><li>la méthode des quatre ingrédients pour obtenir une réponse utile ;</li><li>dix demandes prêtes à recopier pour la vie de tous les jours ;</li><li>la dictée à voix haute et l’envoi d’une photo ;</li><li>les erreurs de la machine en matière de santé, d’argent et de droit ;</li><li>ce qu’il ne faut jamais lui confier ;</li><li>les arnaques à la voix imitée et les numéros utiles en France.</li></ul><p>Avec un jeu de vrai ou faux, un lexique et un aide-mémoire à garder près du téléphone.</p><p>Un cadeau utile à offrir à un parent ou à un grand-parent.</p>",
+    "mots_cles": [
+      "intelligence artificielle pour les seniors",
+      "débuter avec chatgpt pas à pas",
+      "guide ia gros caractères",
+      "informatique pour personnes âgées",
+      "cadeau utile grand-parent",
+      "éviter les arnaques téléphone internet",
+      "ia facile pour débutants"
+    ],
+    "categories": [
+      "Informatique et Internet > Initiation",
+      "Loisirs et vie pratique > Seniors"
+    ],
+    "prix_broche_eur": 7.9,
+    "prix_numerique_eur": 3.99,
+    "declaration_ia": "Texte : généré par IA (Claude) à partir du plan validé par l’auteur, puis relu et corrigé. Couverture : composition typographique générée par programme, sans image IA."
+  },
+  "type": "guide",
+  "mentions_supplementaires": [
+    "Les noms de produits et de sociétés cités appartiennent à leurs propriétaires respectifs. Ce guide est indépendant : il n’est ni commandé ni approuvé par ces sociétés.",
+    "Les applications évoluent vite : l’emplacement d’un bouton ou le nom d’un service peuvent avoir changé depuis l’impression. Informations vérifiées en novembre 2026.",
+    "Ce guide ne remplace pas l’avis d’un médecin, d’un banquier, d’un notaire ou d’un avocat."
+  ]
+}

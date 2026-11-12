@@ -39,12 +39,17 @@ class Chapitre:
     fichier: Path
     titre: str = ""
     partie: str | None = None
-    # éléments : (numéro de ligne, "p" | "sep", texte)
+    # éléments : (numéro de ligne, genre, texte). Genres : p, sep ; en mode guide aussi h2, puce, case, etape:N, encadre:LABEL
     elements: list = field(default_factory=list)
+    guide: bool = False
 
     @property
     def paragraphes(self):
-        return [(n, t) for n, k, t in self.elements if k == "p"]
+        return [(n, t) for n, k, t in self.elements if k != "sep"]
+
+    @property
+    def genres(self):
+        return {n: k for n, k, _ in self.elements}
 
     @property
     def texte(self) -> str:
@@ -59,8 +64,11 @@ class Chapitre:
         return f"ch{self.numero:02d}"
 
 
-def lire_chapitre(fichier: Path, numero: int) -> Chapitre:
-    ch = Chapitre(numero=numero, fichier=fichier)
+PREFIXE_GUIDE = re.compile(r"^(## |- \[ \] |- |\d+\. |> \[[A-ZÀ-Ü ’'-]+\] )")
+
+
+def lire_chapitre(fichier: Path, numero: int, guide: bool = False) -> Chapitre:
+    ch = Chapitre(numero=numero, fichier=fichier, guide=guide)
     for i, brut in enumerate(fichier.read_text(encoding="utf-8").splitlines(), 1):
         ligne = brut.strip()
         if not ligne:
@@ -76,17 +84,37 @@ def lire_chapitre(fichier: Path, numero: int) -> Chapitre:
         if ligne in SEPARATEURS:
             ch.elements.append((i, "sep", ""))
             continue
-        ch.elements.append((i, "p", ligne))
+        m = PREFIXE_GUIDE.match(ligne) if guide else None
+        if m:
+            pre, reste = m.group(1), ligne[m.end():].strip()
+            if pre == "## ":
+                genre = "h2"
+            elif pre == "- [ ] ":
+                genre = "case"
+            elif pre == "- ":
+                genre = "puce"
+            elif pre.startswith(">"):
+                genre = "encadre:" + pre[3:-2]
+            else:
+                genre = "etape:" + pre[:-2]
+            ch.elements.append((i, genre, reste))
+        else:
+            ch.elements.append((i, "p", ligne))
     return ch
+
+
+def est_guide(p: Path) -> bool:
+    return lire_json(p / "livre.json", defaut={}).get("type") == "guide"
 
 
 def chapitres(p: Path, plage: str | None = None) -> list[Chapitre]:
     """Chapitres du projet, triés. Fichiers attendus : chapitres/chNN.md (un paragraphe par ligne)."""
     fichiers = sorted((p / "chapitres").glob("ch[0-9]*.md"))
     res = []
+    guide = est_guide(p)
     for f in fichiers:
         m = re.match(r"ch(\d+)", f.stem)
-        res.append(lire_chapitre(f, int(m.group(1))))
+        res.append(lire_chapitre(f, int(m.group(1)), guide))
     if plage:
         a, _, b = plage.partition("-")
         a, b = int(a), int(b or a)
@@ -95,16 +123,16 @@ def chapitres(p: Path, plage: str | None = None) -> list[Chapitre]:
 
 
 def runs(texte: str) -> list[dict]:
-    """Découpe *italique* en segments {s, i}."""
+    """Découpe **gras** et *italique* en segments {s, i, b}."""
     out, pos = [], 0
-    for m in re.finditer(r"\*([^*\n]+)\*", texte):
+    for m in re.finditer(r"\*\*([^*\n]+)\*\*|\*([^*\n]+)\*", texte):
         if m.start() > pos:
-            out.append({"s": texte[pos:m.start()], "i": False})
-        out.append({"s": m.group(1), "i": True})
+            out.append({"s": texte[pos:m.start()], "i": False, "b": False})
+        out.append({"s": m.group(1) or m.group(2), "i": m.group(2) is not None, "b": m.group(1) is not None})
         pos = m.end()
     if pos < len(texte):
-        out.append({"s": texte[pos:], "i": False})
-    return out or [{"s": "", "i": False}]
+        out.append({"s": texte[pos:], "i": False, "b": False})
+    return out or [{"s": "", "i": False, "b": False}]
 
 
 def phrases(texte: str) -> list[str]:

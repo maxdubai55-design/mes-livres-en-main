@@ -1,0 +1,6 @@
+body { font-family: sans-serif; line-height: 1.55; margin: 0 5%; }
+h1 { font-size: 1.5em; margin: 2.5em 0 1em; border-bottom: 3px solid #222; padding-bottom: .3em; page-break-before: always; }
+h4 { font-size: 1.15em; margin: 1.6em 0 .5em; }
+p { margin: 0 0 .9em; }
+li { margin: .5em 0; }
+blockquote { margin: 1.2em 0; padding: .7em 1em; background: #eee; border-left: 5px solid #222; }

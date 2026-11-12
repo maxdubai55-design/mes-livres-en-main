@@ -20,8 +20,12 @@ def _blocs(elements):
         if kind == "sep":
             if out and out[-1]["t"] != "sep":
                 out.append({"t": "sep"})
+        elif kind.startswith("etape:"):
+            out.append({"t": "etape", "n": int(kind[6:]), "runs": runs(t)})
+        elif kind.startswith("encadre:"):
+            out.append({"t": "encadre", "label": kind[8:], "runs": runs(t)})
         else:
-            out.append({"t": "p", "runs": runs(t)})
+            out.append({"t": kind, "runs": runs(t)})
     while out and out[-1]["t"] == "sep":
         out.pop()
     return out
@@ -40,6 +44,7 @@ def _annexes(p: Path):
 def mentions(cfg) -> list[str]:
     l = [f"© {cfg['annee']} {cfg['auteur']}", "Tous droits réservés."]
     l.append("Toute reproduction, même partielle, est interdite sans l’autorisation de l’auteur (art. L. 122-4 du Code de la propriété intellectuelle).")
+    l += cfg.get("mentions_supplementaires", [])
     if cfg.get("fiction", True):
         l.append("Ce livre est une œuvre de fiction. Toute ressemblance avec des personnes ou des faits réels serait fortuite.")
     if cfg.get("isbn"):
@@ -48,6 +53,23 @@ def mentions(cfg) -> list[str]:
         l.append(f"Dépôt légal : {cfg['depot_legal']}")
     l.append(cfg.get("editeur") or "Publication indépendante")
     return l
+
+
+def _md(kind: str, t: str, esc=lambda x: x) -> str:
+    """Un élément du manuscrit en Markdown standard."""
+    if kind == "sep":
+        return "* * *"
+    if kind == "h2":
+        return "#### " + esc(t)
+    if kind == "puce":
+        return "- " + esc(t)
+    if kind == "case":
+        return "- ☐ " + esc(t)
+    if kind.startswith("etape:"):
+        return f"{kind[6:]}. " + esc(t)
+    if kind.startswith("encadre:"):
+        return f"> **{kind[8:].capitalize()}** — " + esc(t)
+    return esc(t)
 
 
 def assembler(p: Path) -> Path:
@@ -59,7 +81,7 @@ def assembler(p: Path) -> Path:
             out += [f"## {ch.partie}", ""]
         out += [f"### {ch.titre}", ""]
         for _, kind, t in ch.elements:
-            out += ["* * *" if kind == "sep" else t, ""]
+            out += [_md(kind, t), ""]
     dest = p / "sortie" / f"{cfg['slug']}.md"
     dest.parent.mkdir(exist_ok=True)
     dest.write_text("\n".join(out), encoding="utf-8")
@@ -74,7 +96,8 @@ def interieur(p: Path) -> tuple[Path, int]:
     fmt = cfg["format"]
     build = p / "sortie" / "build"
     build.mkdir(parents=True, exist_ok=True)
-    shutil.copy(GABARITS / "interieur.typ", build / "interieur.typ")
+    guide = cfg.get("type") == "guide"
+    shutil.copy(GABARITS / ("guide.typ" if guide else "interieur.typ"), build / "interieur.typ")
     data = {
         "titre": cfg["titre"], "sous_titre": cfg.get("sous_titre", ""), "auteur": cfg["auteur"],
         "editeur": cfg.get("editeur", ""), "mention_genre": cfg.get("mention_genre", "roman"),
@@ -83,7 +106,8 @@ def interieur(p: Path) -> tuple[Path, int]:
         "police": fmt.get("police", "Libertinus Serif"), "corps": fmt.get("corps", 11), "interligne": fmt.get("interligne", 0.68),
         "belle_page": fmt.get("chapitres_en_belle_page", False),
         "chapitres": [{"titre": c.titre, "partie": c.partie, "blocs": _blocs(c.elements)} for c in chs],
-        "annexes": _annexes(p),
+        "annexes": _annexes(p), "police_titres": fmt.get("police_titres", "DejaVu Sans"),
+        "pages_notes": fmt.get("pages_notes", 0), "lignes_notes": fmt.get("lignes_notes", 18),
     }
     dest = p / "sortie" / f"{cfg['slug']}_interieur_KDP.pdf"
     from pypdf import PdfReader
@@ -158,11 +182,26 @@ def word(p: Path) -> Path:
                 premier = True
                 continue
             par = doc.add_paragraph()
-            if not premier:
+            guide = cfg.get("type") == "guide"
+            if guide:
+                par.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                par.paragraph_format.space_after = Pt(8)
+            elif not premier:
                 par.paragraph_format.first_line_indent = Cm(0.55)
             premier = False
+            marque = {"puce": "•  ", "case": "☐  "}.get(kind, "")
+            if kind.startswith("etape:"):
+                marque = kind[6:] + ".  "
+            if kind.startswith("encadre:"):
+                par.paragraph_format.left_indent = Cm(0.8)
+                par.add_run(kind[8:] + " — ").bold = True
+            if kind in ("puce", "case") or kind.startswith("etape:"):
+                par.paragraph_format.left_indent = Cm(0.8)
+            if marque:
+                par.add_run(marque).bold = True
             for r in runs(t):
-                par.add_run(r["s"]).italic = r["i"]
+                run = par.add_run(r["s"])
+                run.italic, run.bold = r["i"], r["b"] or kind == "h2"
     dest = p / "sortie" / f"{cfg['slug']}.docx"
     doc.save(str(dest))
     return dest
@@ -180,18 +219,22 @@ def epub(p: Path, couverture_jpg: Path | None = None) -> Path:
         md.append(f"identifier: {json.dumps(cfg['isbn_numerique'])}")
     md += ["---", ""]
     esc = lambda t: re.sub(r"([\\`_\[\]<>#~^$|])", r"\\\1", t)
+    if cfg.get("type") == "guide":
+        css = GABARITS / "epub_guide.css"
+    else:
+        css = GABARITS / "epub.css"
     for ch in chapitres(p):
         if ch.partie:
             md += [f"# {esc(ch.partie)} {{.partie}}", ""]
         md += [f"# {esc(ch.titre)}", ""]
         for _, kind, t in ch.elements:
-            md += ["::: sep\n\\* \\* \\*\n:::" if kind == "sep" else esc(t), ""]
+            md += ["::: sep\n\\* \\* \\*\n:::" if kind == "sep" else _md(kind, t, esc), ""]
     md += ["# Mentions légales {.unnumbered}", ""] + [esc(l) + "\n" for l in mentions(cfg)]
     src = build / "epub.md"
     src.write_text("\n".join(md), encoding="utf-8")
     dest = p / "sortie" / f"{cfg['slug']}.epub"
     cmd = ["pandoc", str(src), "-o", str(dest), "--from", "markdown-smart", "--toc", "--toc-depth=1",
-           "--split-level=1", "--css", str(GABARITS / "epub.css"), "--metadata", "toc-title=Sommaire"]
+           "--split-level=1", "--css", str(css), "--metadata", "toc-title=Sommaire"]
     if couverture_jpg and couverture_jpg.exists():
         cmd += ["--epub-cover-image", str(couverture_jpg)]
     subprocess.run(cmd, check=True)

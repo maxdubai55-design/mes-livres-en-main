@@ -15,8 +15,9 @@ RESIDUS = [
     r"en tant qu[e’' ]+(?:IA|intelligence artificielle|modèle de langage|assistant)",
     r"\bvoici (?:le|la|une|ton|votre) (?:chapitre|version|scène|réécriture|suite|texte)",
     r"j[’']espère que (?:ce|cela|cette)", r"n[’']hésite[zs]? pas à",
-    r"\b(?:ChatGPT|GPT-\d|Claude|Gemini)\b", r"^\s*(?:Note|N\.B\.) de l[’']auteur", r"\(suite\)\s*$",
+    r"^\s*(?:Note|N\.B\.) de l[’']auteur", r"\(suite\)\s*$",
 ]
+RESIDUS_FICTION = [r"\b(?:ChatGPT|GPT-\d|Claude|Gemini)\b"]   # légitimes dans un guide, jamais dans un roman
 
 # (catégorie, étiquette, motif)
 SIGNAUX = [
@@ -56,6 +57,12 @@ SIGNAUX = [
     ("verbe-valise", "sembler/paraître + infinitif", r"\b(?:semblait|semblaient|sembla|paraissait|paraissaient|parut) (?:\w+ )?(?:vouloir|dire|porter|contenir|peser|flotter|vibrer|retenir|murmurer|attendre|hésiter)\b"),
     ("verbe-valise", "se mettre à / commencer à en série", r"\bse (?:mit|mirent) à (?:\w+er|\w+ir|\w+re)\b"),
     ("verbe-valise", "réaliser/comprendre soudain", r"\b(?:réalisa|comprit|sut|sentit) (?:alors |soudain |brusquement |enfin )?que\b"),
+    # Tics de la prose pratique générée
+    ("formule creuse", "ouverture passe-partout", r"dans (?:le|notre) monde (?:d[’']aujourd[’']hui|actuel|moderne|numérique)|à l[’']ère (?:du|de l[’'])|de nos jours,|plus que jamais"),
+    ("formule creuse", "invitation creuse", r"\b(?:plongeons|explorons|découvrons ensemble|embarquons|partons à la découverte|laissez-vous guider|prêts? \? c[’']est parti)\b"),
+    ("formule creuse", "que vous soyez X ou Y", r"\bque vous soyez (?:\w+ ){1,4}ou (?:\w+)"),
+    ("formule creuse", "conclusion annoncée", r"\b(?:en conclusion|en résumé|pour conclure|en somme|vous l[’']aurez compris|comme nous l[’']avons vu|il est (?:essentiel|crucial|primordial|important) de)\b"),
+    ("intensificateur", "promesse publicitaire", r"\b(?:révolutionn\w+|incontournable|indispensable|ultime|puissant(?:e)?s?|formidable|incroyable|magique|en un clin d[’']œil|un jeu d[’']enfant|véritable (?:allié|compagnon|révolution|atout))\b"),
     # Bilans émotionnels / explication après la scène
     ("bilan émotionnel", "il/elle se sentait + adjectif", r"\b(?:il|elle|je) (?:se sentait|se sentit|me sentais|me sentis) (?:\w+ )?(?:vide|seul|seule|perdu|perdue|soulagé|soulagée|coupable|trahi|trahie|épuisé|épuisée|étrangement \w+|à la fois)"),
     ("bilan émotionnel", "à la fois X et Y", r"\bà la fois (?:\w+ ){1,3}et (?:\w+)"),
@@ -64,6 +71,7 @@ SIGNAUX = [
 ]
 SIGNAUX = [(c, e, re.compile(m, I)) for c, e, m in SIGNAUX]
 RESIDUS = [re.compile(m, I | re.M) for m in RESIDUS]
+RESIDUS_FICTION = [re.compile(m, I | re.M) for m in RESIDUS_FICTION]
 
 # Clôtures sentencieuses : examinées sur la dernière phrase de chaque scène et de chaque chapitre.
 CLOTURE = re.compile(
@@ -113,7 +121,7 @@ def controler(p, chaps) -> Rapport:
         n_signaux = 0
         for num, texte in ch.paragraphes:
             ou = f"{ch.ref}:{num}"
-            for rx in RESIDUS:
+            for rx in RESIDUS + ([] if ch.guide else RESIDUS_FICTION):
                 for m in rx.finditer(texte):
                     r.ajouter("BLOQUANT", ou, f"résidu de génération : « {m.group(0)} »")
             for cat, etiq, rx in SIGNAUX:

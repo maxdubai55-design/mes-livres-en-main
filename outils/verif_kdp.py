@@ -64,6 +64,8 @@ def interieur(p: Path, pdf: Path) -> tuple[Rapport, int]:
             blanches.append(i)
             continue
         g, haut, d, bas = bbox[0] * PT_CM, bbox[1] * PT_CM, (w - bbox[2]) * PT_CM, (h - bbox[3]) * PT_CM
+        if cfg.get("type") == "guide" and 3 < i <= n - cfg["format"].get("pages_notes", 0) and len((reader.pages[i - 1].extract_text() or "").replace(cfg["titre"], "")) < 330:
+            r.ajouter("IMPORTANT", f"p. {i}", "page presque vide (fin de chapitre qui déborde de quelques lignes) — ajuster le texte ou l'interligne")
         inter, ext = (g, d) if i % 2 else (d, g)      # page impaire = recto : reliure à gauche
         for k, v in (("int", inter), ("ext", ext), ("haut", haut), ("bas", bas)):
             pires[k] = min(pires[k], v)
@@ -78,9 +80,10 @@ def interieur(p: Path, pdf: Path) -> tuple[Rapport, int]:
         r.ajouter("IMPORTANT", f"p. {consecutives[0]}", "deux pages blanches consécutives (KDP en refuse plus de deux ; ici c'est le signe d'un défaut de mise en page)")
     if n in blanches:
         r.ajouter("MINEUR", f"p. {n}", "dernière page blanche")
-    texte1 = (reader.pages[2].extract_text() if n > 2 else "") or ""
-    if cfg["titre"].lower()[:12] not in texte1.lower().replace("\n", " "):
-        r.ajouter("IMPORTANT", "p. 3", "le titre n'a pas été retrouvé sur la page de titre")
+    texte1 = " ".join((reader.pages[i].extract_text() or "") for i in range(min(3, n)))
+    lettres = lambda x: re.sub(r"[^a-zà-ÿœ]", "", x.lower())
+    if lettres(cfg["titre"])[:14] not in lettres(texte1):
+        r.ajouter("IMPORTANT", "p. 1-3", "le titre n'a pas été retrouvé sur la page de titre")
     r.note(f"{n} pages · marges réelles minimales : intérieure {pires['int']:.2f} cm (min. KDP {int_min:.2f}), extérieure {pires['ext']:.2f}, haut {pires['haut']:.2f}, bas {pires['bas']:.2f} (min. {ext_min:.2f}) · pages blanches : {blanches or 'aucune'}")
     return r, n
 

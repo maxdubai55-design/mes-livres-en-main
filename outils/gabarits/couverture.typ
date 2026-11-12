@@ -66,7 +66,7 @@
       #for p in d.quatrieme [#par(p)]
       #if d.bio != "" [#v(0.6em) #line(length: 12%, stroke: 0.6pt + c-accent) #v(0.2em) #par(text(style: "italic", d.bio))]
     ]
-    #ajuste(corps, L - 2 * m, H - zone-cb - 2 * m - 0.7cm, (11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8))
+    #ajuste(corps, L - 2 * m, H - zone-cb - 2 * m - 0.7cm, (11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8).map(t => t * H / 20.32cm))
   ])
   if d.guides {
     let trait = 0.5pt + rgb("#ff2d55")

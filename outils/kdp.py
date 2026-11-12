@@ -14,6 +14,7 @@ SECURITE_COUV = 0.25 * POUCE              # texte de couverture : retrait consei
 FORMATS = {                               # tailles de coupe courantes (largeur, hauteur)
     "12.7x20.32": (12.7, 20.32), "12.85x19.84": (12.85, 19.84), "13.34x20.32": (13.34, 20.32),
     "13.97x21.59": (13.97, 21.59), "15.24x22.86": (15.24, 22.86),
+    "17.78x25.4": (17.78, 25.4), "21.59x27.94": (21.59, 27.94),
 }
 DESCRIPTION_MAX = 4000
 MOTS_CLES_NB, MOT_CLE_MAX = 7, 50
